@@ -1,25 +1,11 @@
-from django.urls import path, include
-from rest_framework.routers import DefaultRouter
-from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
-from .views import (
-    RegisterView, UserProfileView, ItemListingViewSet, 
-    ReviewViewSet, search_marketplace
-)
-
-router = DefaultRouter()
-router.register(r'items', ItemListingViewSet, basename='item')
-router.register(r'reviews', ReviewViewSet, basename='review')
+from django.urls import path
+from . import views
 
 urlpatterns = [
-    # Аутентификация и Профиль
-    path('auth/register/', RegisterView.as_view(), name='register'),
-    path('auth/login/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
-    path('auth/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
-    path('profile/', UserProfileView.as_view(), name='profile'),
-    
-    # Поиск по нескольким сущностям
-    path('search/', search_marketplace, name='search'),
-    
-    # РоутыViewSet (Объявления, Отзывы)
-    path('', include(router.urls)),
+    path('', views.item_list, name='item_list'),
+    path('add/', views.add_item, name='add_item'),
+    path('items/<int:item_id>/sold/', views.mark_as_sold, name='mark_as_sold'),
+    path('register/', views.register_view, name='register'),
+    path('login/', views.login_view, name='login'),
+    path('logout/', views.logout_view, name='logout'),
 ]

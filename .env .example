@@ -1,0 +1,10 @@
+Copy to .env (it is git-ignored) or export these variables in your shell.
+Never commit real values.
+DJANGO_DEBUG=True
+DJANGO_SECRET_KEY=change-me
+DJANGO_ALLOWED_HOSTS=127.0.0.1,localhost
+POSTGRES_DB=student_marketplace_db
+POSTGRES_USER=postgres
+POSTGRES_PASSWORD=change-me
+POSTGRES_HOST=127.0.0.1
+POSTGRES_PORT=5432

@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator, MaxValueValidator
 
 
@@ -41,9 +42,28 @@ class ItemListing(models.Model):
 
 
 class Transaction(models.Model):
-    listing = models.ForeignKey(ItemListing, on_delete=models.CASCADE)
-    buyer = models.ForeignKey(User, on_delete=models.CASCADE, related_name='purchases')
+    # 1:1 — одно объявление может иметь не более одной транзакции.
+    # PROTECT — нельзя удалить объявление, по которому есть покупка,
+    # иначе потеряется история покупок.
+    listing = models.OneToOneField(
+        ItemListing,
+        on_delete=models.PROTECT,
+        related_name='transaction',
+    )
+    # 1:N — один покупатель может совершить несколько покупок.
+    # PROTECT — нельзя удалить пользователя, у которого есть покупки
+    # (для «удаления» аккаунта используйте is_active=False).
+    buyer = models.ForeignKey(
+        User,
+        on_delete=models.PROTECT,
+        related_name='purchases',
+    )
     completed_at = models.DateTimeField(auto_now_add=True)
+
+    def clean(self):
+        super().clean()
+        if self.listing_id and self.buyer_id and self.listing.seller_id == self.buyer_id:
+            raise ValidationError({'buyer': 'The seller cannot buy their own listing.'})
 
     def __str__(self):
         return f"Transaction {self.id} - {self.listing.title}"

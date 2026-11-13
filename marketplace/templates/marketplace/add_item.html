@@ -1,0 +1,73 @@
+{% extends 'marketplace/base.html' %}
+{% load i18n %}
+
+{% block title %}{% trans "Post a New Item" %} — Student Marketplace{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-12 col-md-8 col-lg-6">
+        <div class="card shadow-sm border-0">
+            <div class="card-body p-4">
+                <h2 class="h4 fw-bold mb-4">{% trans "Post a New Item" %}</h2>
+
+                <form method="POST" novalidate>
+                    {% csrf_token %}
+
+                    <!-- Общие ошибки формы (например, превышен лимит в 10 активных объявлений) -->
+                    {% if form.non_field_errors %}
+                        <div class="alert alert-danger">
+                            {% for error in form.non_field_errors %}
+                                <div>{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+
+                    <!-- Вывод полей формы (Название, Цена, Категория) -->
+                    {% for field in form %}
+                        <div class="mb-3">
+                            <label for="{{ field.id_for_label }}" class="form-label fw-semibold">
+                                {{ field.label }}
+                            </label>
+                            
+                            {{ field }}
+
+                            {% if field.help_text %}
+                                <div class="form-text">{{ field.help_text }}</div>
+                            {% endif %}
+
+                            <!-- Ошибки конкретного поля (например, цена <= 0 или > 100,000) -->
+                            {% if field.errors %}
+                                <div class="text-danger small mt-1">
+                                    {% for error in field.errors %}
+                                        <div>{{ error }}</div>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+
+                    <div class="d-grid gap-2 mt-4">
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            {% trans "Submit Listing" %}
+                        </button>
+                        <a href="{% url 'item_list' %}" class="btn btn-outline-secondary">
+                            {% trans "Cancel" %}
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Скрипт для автоматического добавления красивых стилей Bootstrap к полям Django -->
+<script>
+    document.querySelectorAll('input, select, textarea').forEach(el => {
+        if (el.tagName === 'SELECT') {
+            el.classList.add('form-select');
+        } else {
+            el.classList.add('form-control');
+        }
+    });
+</script>
+{% endblock %}

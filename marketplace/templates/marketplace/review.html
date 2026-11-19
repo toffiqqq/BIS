@@ -1,0 +1,88 @@
+{% extends 'marketplace/base.html' %}
+{% load i18n market_extras %}
+
+{% block title %}{{ seller.username }} — Student Marketplace{% endblock %}
+
+{% block content %}
+<div class="profile-head mb-3">
+    <div class="avatar">{{ seller.username|first|upper }}</div>
+    <div class="profile-info">
+        <h1>{{ seller.username }}</h1>
+        <div class="kv"><span>{% trans "On the site since" %} {{ seller.date_joined|date:"d.m.Y" }}</span></div>
+    </div>
+</div>
+
+<div class="review-layout">
+    <aside class="panel">
+        {% if summary.n %}
+            <div class="rating-big">{{ summary.avg|floatformat:1 }}</div>
+            <div class="stars">{{ summary.avg|stars }}</div>
+            <p class="muted small">{% blocktrans count counter=summary.n %}{{ counter }} review{% plural %}{{ counter }} reviews{% endblocktrans %}</p>
+            {% for row in distribution %}
+                <div class="dist-row">
+                    <span>{{ row.stars }} ★</span>
+                    <div class="bar"><i style="width: {{ row.percent }}%"></i></div>
+                    <span class="muted">{{ row.count }}</span>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p class="muted mb-0">{% trans "No reviews yet." %}</p>
+        {% endif %}
+    </aside>
+
+    <div class="stack">
+        {% if can_review %}
+        <section class="panel" id="review-form">
+            <h3>{% trans "Your review" %}</h3>
+            <form method="post">
+                {% csrf_token %}
+                <div class="form-field">
+                    <label for="{{ form.listing.id_for_label }}">{{ form.listing.label }}</label>
+                    {{ form.listing }}
+                    {% for e in form.listing.errors %}<div class="field-error">{{ e }}</div>{% endfor %}
+                </div>
+                <div class="form-field">
+                    <span class="label">{{ form.rating.label }}</span>
+                    <div class="star-picker">
+                        {% for i in "54321" %}
+                            <input type="radio" id="star{{ i }}" name="rating" value="{{ i }}" {% if form.rating.value|stringformat:"s" == i %}checked{% elif not form.rating.value and i == "5" %}checked{% endif %}>
+                            <label for="star{{ i }}" title="{{ i }}">★</label>
+                        {% endfor %}
+                    </div>
+                    {% for e in form.rating.errors %}<div class="field-error">{{ e }}</div>{% endfor %}
+                </div>
+                <div class="form-field">
+                    <label for="{{ form.comment.id_for_label }}">{{ form.comment.label }}</label>
+                    {{ form.comment }}
+                    {% for e in form.comment.errors %}<div class="field-error">{{ e }}</div>{% endfor %}
+                </div>
+                <button class="btn btn-primary" type="submit">{% trans "Send" %}</button>
+            </form>
+        </section>
+        {% endif %}
+
+        <section class="panel">
+            <h3>{% trans "Reviews" %}</h3>
+            {% for review in reviews %}
+                <div class="review">
+                    <div class="review-head">
+                        <span><b>{{ review.reviewer.username }}</b> <span class="stars">{{ review.rating|stars }}</span></span>
+                        <span class="muted small">{{ review.created_at|date:"d.m.Y" }}</span>
+                    </div>
+                    {% if review.listing %}<div class="muted small">{{ review.listing.title }}</div>{% endif %}
+                    <p class="mb-0">{{ review.comment }}</p>
+                </div>
+            {% empty %}
+                <p class="muted mb-0">{% trans "No reviews yet." %}</p>
+            {% endfor %}
+        </section>
+    </div>
+</div>
+
+{% if active_items %}
+<div class="section-title"><h2>{% trans "Listings" %}</h2></div>
+<div class="grid grid-items">
+    {% for item in active_items %}{% include 'marketplace/_item_card.html' %}{% endfor %}
+</div>
+{% endif %}
+{% endblock %}

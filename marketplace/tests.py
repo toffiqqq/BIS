@@ -7,7 +7,7 @@ from django.db.models import ProtectedError, RestrictedError
 from django.test import TestCase, Client
 from django.urls import reverse
 
-from .models import User, Category, ItemListing, Transaction
+from .models import User, Category, ItemListing, Transaction, Review
 from .forms import StudentRegisterForm, ItemListingForm
 from .services import PurchaseError, purchase_listing
 
@@ -150,20 +150,13 @@ class StudentMarketplaceTests(TestCase):
         self.assertFalse(duplicate_form.is_valid())
         self.assertIn('student_id', duplicate_form.errors)
 
-    def test_tc10_admin_panel_role_based_access(self):
+    def test_tc10_admin_panel_removed(self):
+        # Админ-панели на сайте нет: /admin/ не существует ни для студента, ни для суперпользователя.
         self.client.login(username='alex_test', password='StrongPassword123!')
-        student_response = self.client.get(reverse('admin:index'))
-        self.assertEqual(student_response.status_code, 302)
-
-        admin_user = User.objects.create_superuser(
-            username='admin_test',
-            email='admin_test@kbtu.kz',
-            password='StrongPassword123!',
-            student_id='24B000099'
-        )
+        self.assertEqual(self.client.get('/admin/').status_code, 404)
+        User.objects.create_superuser(username='admin_test', password='StrongPassword123!', student_id='24B000099')
         self.client.login(username='admin_test', password='StrongPassword123!')
-        admin_response = self.client.get(reverse('admin:index'))
-        self.assertEqual(admin_response.status_code, 200)
+        self.assertEqual(self.client.get('/admin/').status_code, 404)
 
 
 class RelationshipAndPurchaseTests(TestCase):
@@ -330,19 +323,232 @@ class RelationshipAndPurchaseTests(TestCase):
         self.assertEqual(listing.status, 'Active')
         self.assertFalse(Transaction.objects.exists())
 
-    def test_13_admin_shows_users_listings_transactions(self):
-        listing = self.make_listing('Admin Item')
-        purchase_listing(listing.id, buyer=self.buyer)
-        User.objects.create_superuser(username='root_fk', password=self.PASSWORD, student_id='24B100099')
-        self.client.login(username='root_fk', password=self.PASSWORD)
-        for name in ('user', 'itemlisting', 'transaction'):
-            r = self.client.get(reverse(f'admin:marketplace_{name}_changelist'))
-            self.assertEqual(r.status_code, 200, name)
-        r = self.client.get(reverse('admin:marketplace_transaction_changelist'))
-        self.assertContains(r, 'seller_fk')
-        self.assertContains(r, 'buyer_fk')
-        r = self.client.get(reverse('admin:marketplace_itemlisting_changelist'))
-        self.assertContains(r, 'buyer_fk')
-        r = self.client.get(reverse('admin:marketplace_itemlisting_change', args=[listing.id]))
+
+class ShowcaseFeatureTests(TestCase):
+    """Новые страницы: витрина, каталог с фильтрами, Buy Now, профиль, отзывы, i18n."""
+
+    PASSWORD = 'StrongPassword123!'
+
+    def setUp(self):
+        self.seller = User.objects.create_user(username='seller_ui', password=self.PASSWORD, student_id='24B200001')
+        self.buyer = User.objects.create_user(username='buyer_ui', password=self.PASSWORD, student_id='24B200002')
+        self.stranger = User.objects.create_user(username='stranger_ui', password=self.PASSWORD)
+        self.books = Category.objects.create(name='Textbooks')
+        self.tech = Category.objects.create(name='Electronics')
+        self.cheap_book = ItemListing.objects.create(title='Calculus', price=3000, seller=self.seller, category=self.books)
+        self.laptop = ItemListing.objects.create(title='Laptop', price=90000, seller=self.seller, category=self.tech)
+
+    # --- Главная и каталог ---------------------------------------------------
+    def test_home_page_shows_categories_and_fresh_items(self):
+        r = self.client.get(reverse('home'))
         self.assertEqual(r.status_code, 200)
-        self.assertContains(r, 'buyer_fk')
+        self.assertContains(r, 'Textbooks')
+        self.assertContains(r, f'?category={self.books.id}')
+        self.assertContains(r, 'Calculus')
+        self.assertNotContains(r, 'cdn.jsdelivr.net')            # без внешнего Bootstrap
+        self.assertContains(r, 'marketplace/css/style.css')
+
+    def test_catalog_is_on_catalog_url(self):
+        self.assertEqual(reverse('item_list'), '/catalog/')
+        self.assertEqual(self.client.get('/catalog/').status_code, 200)
+
+    def test_catalog_filters_by_category_and_price(self):
+        r = self.client.get(reverse('item_list'), {'category': self.tech.id})
+        self.assertEqual(list(r.context['items']), [self.laptop])
+        r = self.client.get(reverse('item_list'), {'min_price': 1000, 'max_price': 5000})
+        self.assertEqual(list(r.context['items']), [self.cheap_book])
+        r = self.client.get(reverse('item_list'), {'q': 'Lap', 'category': self.books.id})
+        self.assertEqual(list(r.context['items']), [])
+
+    def test_catalog_sort_and_invalid_filter_values(self):
+        r = self.client.get(reverse('item_list'), {'sort': 'cheap'})
+        self.assertEqual(list(r.context['items']), [self.cheap_book, self.laptop])
+        r = self.client.get(reverse('item_list'), {'min_price': 'abc'})
+        self.assertEqual(r.status_code, 200)
+        self.assertEqual(len(r.context['items']), 2)
+
+    def test_sold_items_are_hidden_from_catalog(self):
+        purchase_listing(self.cheap_book.id, buyer=self.buyer)
+        r = self.client.get(reverse('item_list'))
+        self.assertEqual(list(r.context['items']), [self.laptop])
+
+    def test_item_cards_have_image(self):
+        r = self.client.get(reverse('item_list'))
+        self.assertContains(r, 'marketplace/img/categories/textbooks.svg')
+        self.laptop.image_url = 'marketplace/img/items/laptop.svg'
+        self.laptop.save()
+        r = self.client.get(reverse('item_list'))
+        self.assertContains(r, 'marketplace/img/items/laptop.svg')
+
+    # --- Buy Now -------------------------------------------------------------
+    def test_buy_now_button_only_for_other_users_items(self):
+        buy_url = reverse('buy_item', args=[self.cheap_book.id])
+        self.client.login(username='buyer_ui', password=self.PASSWORD)
+        self.assertContains(self.client.get(reverse('item_list')), buy_url)
+        self.client.login(username='seller_ui', password=self.PASSWORD)
+        r = self.client.get(reverse('item_list'))
+        self.assertNotContains(r, buy_url)
+        # «Отметить проданным» — в профиле продавца
+        r = self.client.get(reverse('profile'))
+        self.assertContains(r, reverse('mark_as_sold', args=[self.cheap_book.id]))
+
+    def test_guest_sees_blurred_cards_with_login_hint(self):
+        r = self.client.get(reverse('item_list'))
+        self.assertContains(r, 'is-locked')
+        self.assertContains(r, 'Log in to buy')
+        self.assertNotContains(r, reverse('buy_item', args=[self.cheap_book.id]))
+
+    def test_only_one_sell_button_on_page(self):
+        self.client.login(username='buyer_ui', password=self.PASSWORD)
+        for url in (reverse('home'), reverse('item_list'), reverse('profile')):
+            r = self.client.get(url)
+            self.assertEqual(r.content.decode().count(f'href="{reverse("add_item")}"'), 1, url)
+
+    def test_buy_now_returns_to_safe_next_page_only(self):
+        self.client.login(username='buyer_ui', password=self.PASSWORD)
+        r = self.client.post(reverse('buy_item', args=[self.cheap_book.id]), {'next': '/catalog/?sort=cheap'})
+        self.assertRedirects(r, '/catalog/?sort=cheap', fetch_redirect_response=False)
+        r = self.client.post(reverse('buy_item', args=[self.laptop.id]), {'next': 'https://evil.example.com/'})
+        self.assertRedirects(r, reverse('item_list'), fetch_redirect_response=False)
+
+    def test_mark_as_sold_by_get_link_changes_nothing(self):
+        self.client.login(username='seller_ui', password=self.PASSWORD)
+        self.client.get(reverse('mark_as_sold', args=[self.cheap_book.id]), {'buyer': 'buyer_ui'})
+        self.cheap_book.refresh_from_db()
+        self.assertEqual(self.cheap_book.status, 'Active')
+        self.assertFalse(Transaction.objects.exists())
+
+    # --- Профиль -------------------------------------------------------------
+    def test_profile_requires_login(self):
+        r = self.client.get(reverse('profile'))
+        self.assertRedirects(r, f"{reverse('login')}?next={reverse('profile')}", fetch_redirect_response=False)
+
+    def test_profile_shows_student_listings_and_purchases(self):
+        purchase_listing(self.cheap_book.id, buyer=self.buyer)
+        self.client.login(username='seller_ui', password=self.PASSWORD)
+        r = self.client.get(reverse('profile'))
+        self.assertContains(r, '24B200001')
+        self.assertEqual(r.context['active_listings'], [self.laptop])
+        self.assertEqual(list(r.context['sold_listings']), [self.cheap_book])
+        self.assertContains(r, 'buyer_ui')                       # покупатель проданного товара
+
+        self.client.login(username='buyer_ui', password=self.PASSWORD)
+        r = self.client.get(reverse('profile'))
+        self.assertEqual([tx.listing for tx in r.context['purchases']], [self.cheap_book])
+        self.assertContains(r, reverse('seller_reviews', args=['seller_ui']))
+
+    # --- Отзывы --------------------------------------------------------------
+    def review_url(self):
+        return reverse('seller_reviews', args=['seller_ui'])
+
+    def test_buyer_can_leave_one_review_per_purchase(self):
+        purchase_listing(self.cheap_book.id, buyer=self.buyer)
+        self.client.login(username='buyer_ui', password=self.PASSWORD)
+        self.assertTrue(self.client.get(self.review_url()).context['can_review'])
+        data = {'listing': self.cheap_book.id, 'rating': 5, 'comment': 'Great!'}
+        self.client.post(self.review_url(), data)
+        self.client.post(self.review_url(), data)                 # повторная попытка
+        self.assertEqual(Review.objects.count(), 1)
+        review = Review.objects.get()
+        self.assertEqual((review.reviewer, review.seller, review.listing), (self.buyer, self.seller, self.cheap_book))
+        r = self.client.get(self.review_url())
+        self.assertFalse(r.context['can_review'])
+        self.assertContains(r, 'Great!')
+        self.assertEqual(r.context['summary']['avg'], 5)
+
+    def test_non_buyer_and_seller_cannot_review(self):
+        purchase_listing(self.cheap_book.id, buyer=self.buyer)
+        data = {'listing': self.cheap_book.id, 'rating': 1, 'comment': 'Fake'}
+        for username in ('stranger_ui', 'seller_ui'):
+            self.client.login(username=username, password=self.PASSWORD)
+            self.assertFalse(self.client.get(self.review_url()).context['can_review'])
+            self.client.post(self.review_url(), data)
+        self.assertFalse(Review.objects.exists())
+
+    def test_review_rating_must_be_1_to_5(self):
+        purchase_listing(self.cheap_book.id, buyer=self.buyer)
+        self.client.login(username='buyer_ui', password=self.PASSWORD)
+        self.client.post(self.review_url(), {'listing': self.cheap_book.id, 'rating': 9, 'comment': 'x'})
+        self.assertFalse(Review.objects.exists())
+
+    def test_review_model_rejects_self_review(self):
+        with self.assertRaises(ValidationError):
+            Review(reviewer=self.seller, seller=self.seller, rating=5, comment='me').full_clean()
+
+    # --- Мультиязычность -----------------------------------------------------
+    def test_language_switch_translates_interface(self):
+        self.client.post(reverse('set_language'), {'language': 'ru', 'next': '/'})
+        r = self.client.get(reverse('home'))
+        self.assertContains(r, 'Каталог')
+        self.assertContains(r, 'Учебники')
+        self.client.post(reverse('set_language'), {'language': 'kk', 'next': '/'})
+        r = self.client.get(reverse('home'))
+        self.assertContains(r, 'Басты бет')
+        self.assertContains(r, 'Оқулықтар')
+
+
+class BalanceTests(TestCase):
+    """Баланс: 10 000 ₸ при регистрации, списание у покупателя и зачисление продавцу."""
+
+    PASSWORD = 'StrongPassword123!'
+
+    def setUp(self):
+        self.seller = User.objects.create_user(username='seller_b', password=self.PASSWORD)
+        self.buyer = User.objects.create_user(username='buyer_b', password=self.PASSWORD)
+        self.category = Category.objects.create(name='Electronics')
+
+    def item(self, price):
+        return ItemListing.objects.create(title=f'Item {price}', price=price, seller=self.seller, category=self.category)
+
+    def test_new_user_starts_with_10000(self):
+        self.assertEqual(self.buyer.balance, 10000)
+        form = StudentRegisterForm(data={'username': 'fresh', 'email': 'f@x.kz', 'student_id': '1',
+                                         'password1': self.PASSWORD, 'password2': self.PASSWORD})
+        self.assertTrue(form.is_valid())
+        self.assertEqual(form.save().balance, 10000)
+
+    def test_purchase_moves_money_from_buyer_to_seller(self):
+        purchase_listing(self.item(3500).id, buyer=self.buyer)
+        self.buyer.refresh_from_db(); self.seller.refresh_from_db()
+        self.assertEqual(self.buyer.balance, 6500)
+        self.assertEqual(self.seller.balance, 13500)
+
+    def test_not_enough_money(self):
+        expensive = self.item(15000)
+        with self.assertRaises(PurchaseError):
+            purchase_listing(expensive.id, buyer=self.buyer)
+        expensive.refresh_from_db(); self.buyer.refresh_from_db()
+        self.assertEqual(expensive.status, 'Active')
+        self.assertEqual(self.buyer.balance, 10000)
+        self.assertFalse(Transaction.objects.exists())
+
+    def test_not_enough_money_via_view(self):
+        expensive = self.item(15000)
+        self.client.login(username='buyer_b', password=self.PASSWORD)
+        r = self.client.get(reverse('item_list'))
+        self.assertContains(r, 'Not enough money')
+        self.assertNotContains(r, reverse('buy_item', args=[expensive.id]))
+        r = self.client.post(reverse('buy_item', args=[expensive.id]))
+        self.assertIn('Not enough money on your balance.', [str(m) for m in get_messages(r.wsgi_request)])
+        self.assertFalse(Transaction.objects.exists())
+
+    def test_balance_restored_if_purchase_fails(self):
+        listing = self.item(2000)
+        with mock.patch.object(Transaction.objects, 'create', side_effect=DatabaseError('boom')):
+            with self.assertRaises(DatabaseError):
+                purchase_listing(listing.id, buyer=self.buyer)
+        self.buyer.refresh_from_db(); self.seller.refresh_from_db()
+        self.assertEqual((self.buyer.balance, self.seller.balance), (10000, 10000))
+
+    def test_mark_as_sold_in_person_does_not_charge(self):
+        listing = self.item(4000)
+        self.client.login(username='seller_b', password=self.PASSWORD)
+        self.client.post(reverse('mark_as_sold', args=[listing.id]), {'buyer': 'buyer_b'})
+        listing.refresh_from_db(); self.buyer.refresh_from_db()
+        self.assertEqual(listing.status, 'Sold')
+        self.assertEqual(self.buyer.balance, 10000)
+
+    def test_balance_shown_in_header_and_profile(self):
+        self.client.login(username='buyer_b', password=self.PASSWORD)
+        r = self.client.get(reverse('profile'))
+        self.assertContains(r, '10,000 ₸')

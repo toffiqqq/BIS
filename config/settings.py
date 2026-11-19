@@ -45,12 +45,37 @@ if not SECRET_KEY:
         raise ImproperlyConfigured('Set the DJANGO_SECRET_KEY environment variable.')
 
 ALLOWED_HOSTS = [h.strip() for h in os.getenv('DJANGO_ALLOWED_HOSTS', '').split(',') if h.strip()]
+if not ALLOWED_HOSTS and not DEBUG:
+    ALLOWED_HOSTS = ['localhost', '127.0.0.1']
+
+# Для форм (CSRF) за HTTPS-прокси хостинга: https://<домен> из ALLOWED_HOSTS.
+CSRF_TRUSTED_ORIGINS = [
+    'https://*' + h if h.startswith('.') else f'https://{h}'
+    for h in ALLOWED_HOSTS if h not in ('localhost', '127.0.0.1', '*')
+]
+# Хостинг принимает HTTPS и передаёт запрос приложению по HTTP с этим заголовком.
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+# Если прокси передаёт настоящий домен в X-Forwarded-Host — используем его.
+USE_X_FORWARDED_HOST = True
+
+# Ошибки и отклонённые адреса (Bad Request 400) пишутся в лог приложения.
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {'console': {'class': 'logging.StreamHandler'}},
+    'loggers': {
+        'django.security.DisallowedHost': {'handlers': ['console'], 'level': 'WARNING', 'propagate': False},
+        'django.request': {'handlers': ['console'], 'level': 'ERROR', 'propagate': False},
+    },
+}
+if not DEBUG:
+    SESSION_COOKIE_SECURE = os.getenv('DJANGO_SECURE_COOKIES', 'True') == 'True'
+    CSRF_COOKIE_SECURE = SESSION_COOKIE_SECURE
 
 
 # Application definition
 
 INSTALLED_APPS = [
-    'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
@@ -62,6 +87,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',  # раздаёт static/ на хостинге
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.locale.LocaleMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -105,6 +131,17 @@ DATABASES = {
     }
 }
 
+# Запасной режим «без PostgreSQL» (только для быстрого показа на чужом ПК):
+# DJANGO_DB=sqlite в .env -> база в файле db.sqlite3. Основная БД проекта — PostgreSQL.
+if os.getenv('DJANGO_DB', 'postgres').lower() == 'sqlite':
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            # Путь к файлу базы можно задать переменной SQLITE_PATH
+            'NAME': os.getenv('SQLITE_PATH', BASE_DIR / 'db.sqlite3'),
+        }
+    }
+
 
 # Password validation
 # https://docs.djangoproject.com/en/6.1/ref/settings/#auth-password-validators
@@ -130,7 +167,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Almaty'
 
 USE_I18N = True
 
@@ -138,7 +175,8 @@ USE_TZ = True
 
 LANGUAGES = [
     ('en', _('English')),
-    ('ru', _('Russian')), 
+    ('ru', _('Russian')),
+    ('kk', _('Kazakh')),
 ]
 
 LOCALE_PATHS = [
@@ -150,6 +188,15 @@ LOCALE_PATHS = [
 # https://docs.djangoproject.com/en/6.1/howto/static-files/
 
 STATIC_URL = 'static/'
+STATIC_ROOT = BASE_DIR / 'staticfiles'  # сюда collectstatic собирает файлы для хостинга
+STORAGES = {
+    'default': {'BACKEND': 'django.core.files.storage.FileSystemStorage'},
+    'staticfiles': {'BACKEND': 'whitenoise.storage.CompressedStaticFilesStorage'},
+}
+
+# Куда отправлять неавторизованных пользователей (@login_required).
+LOGIN_URL = 'login'
+LOGIN_REDIRECT_URL = 'home'
 
 
 # Email

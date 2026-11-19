@@ -2,3 +2,5 @@ Django==6.1.2
 djangorestframework
 psycopg[binary]
 python-dotenv  # optional: loads .env
+gunicorn       # веб-сервер на хостинге (Linux)
+whitenoise     # раздача статики на хостинге

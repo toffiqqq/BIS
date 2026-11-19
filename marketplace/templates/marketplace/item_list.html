@@ -1,0 +1,67 @@
+{% extends 'marketplace/base.html' %}
+{% load i18n %}
+
+{% block title %}{% trans "Catalog" %} — Student Marketplace{% endblock %}
+
+{% block content %}
+    <div class="page-head">
+        <h1>{% trans "Catalog" %}</h1>
+        <span class="muted">{{ total }}</span>
+    </div>
+
+    <form method="get" action="{% url 'item_list' %}" class="filters">
+        <div class="f-search">
+            <label class="label" for="f-q">{% trans "Search" %}</label>
+            <input id="f-q" class="input" type="text" name="q" value="{{ query }}" placeholder="{% trans 'Title, seller or category' %}">
+        </div>
+        <div>
+            <label class="label" for="f-cat">{% trans "Category" %}</label>
+            <select id="f-cat" name="category" class="input">
+                <option value="">{% trans "All" %}</option>
+                {% for cat in categories %}
+                    <option value="{{ cat.id }}" {% if filter_form.category.value|stringformat:"s" == cat.id|stringformat:"s" %}selected{% endif %}>{% trans cat.name %}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div>
+            <label class="label" for="f-min">{% trans "Price from" %}</label>
+            <input id="f-min" class="input" type="number" min="0" step="100" name="min_price" value="{{ filter_form.min_price.value|default_if_none:'' }}">
+        </div>
+        <div>
+            <label class="label" for="f-max">{% trans "to" %}</label>
+            <input id="f-max" class="input" type="number" min="0" step="100" name="max_price" value="{{ filter_form.max_price.value|default_if_none:'' }}">
+        </div>
+        <div>
+            <label class="label" for="f-sort">{% trans "Sort" %}</label>
+            <select id="f-sort" name="sort" class="input">
+                {% for value, label in filter_form.fields.sort.choices %}
+                    <option value="{{ value }}" {% if filter_form.sort.value == value %}selected{% endif %}>{{ label }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="btns">
+            <button type="submit" class="btn btn-primary">{% trans "Apply" %}</button>
+            {% if has_filters %}<a href="{% url 'item_list' %}" class="btn btn-outline">{% trans "Reset" %}</a>{% endif %}
+        </div>
+    </form>
+
+    <div class="grid grid-items">
+        {% for item in items %}
+            {% include 'marketplace/_item_card.html' %}
+        {% empty %}
+            <div class="empty">{% trans "Nothing found." %}</div>
+        {% endfor %}
+    </div>
+
+    {% if page_obj.paginator.num_pages > 1 %}
+    <nav class="pagination" aria-label="{% trans 'Pages' %}">
+        {% if page_obj.has_previous %}
+            <a class="btn btn-outline btn-sm" href="?{% if querystring %}{{ querystring }}&{% endif %}page={{ page_obj.previous_page_number }}">←</a>
+        {% endif %}
+        <span class="muted small">{{ page_obj.number }} / {{ page_obj.paginator.num_pages }}</span>
+        {% if page_obj.has_next %}
+            <a class="btn btn-outline btn-sm" href="?{% if querystring %}{{ querystring }}&{% endif %}page={{ page_obj.next_page_number }}">→</a>
+        {% endif %}
+    </nav>
+    {% endif %}
+{% endblock %}

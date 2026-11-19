@@ -1,0 +1,50 @@
+{% extends 'marketplace/base.html' %}
+{% load i18n market_extras %}
+
+{% block content %}
+    <section class="intro">
+        <h1>{% trans "Buy and sell within the university" %}</h1>
+        <form class="intro-search" method="get" action="{% url 'item_list' %}">
+            <input type="text" name="q" placeholder="{% trans 'Search listings' %}" aria-label="{% trans 'Search' %}">
+            <button class="btn btn-primary" type="submit">{% trans "Search" %}</button>
+        </form>
+    </section>
+
+    {% if tiles %}
+    <div class="grid grid-4 cats">
+        {% for cat in tiles %}
+            <a class="cat-tile" href="{% url 'item_list' %}?category={{ cat.id }}">
+                <img src="{% category_image cat %}" alt="">
+                <div>
+                    <b>{% trans cat.name %}</b>
+                    <span>{{ cat.active_count }}</span>
+                </div>
+            </a>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <div class="section-title">
+        <h2>{% trans "New listings" %}</h2>
+        <a href="{% url 'item_list' %}">{% trans "All" %}</a>
+    </div>
+    <div class="grid grid-items">
+        {% for item in fresh_items %}
+            {% include 'marketplace/_item_card.html' %}
+        {% empty %}
+            <p class="muted">{% trans "No listings yet." %}</p>
+        {% endfor %}
+    </div>
+
+    {% if budget_items %}
+    <div class="section-title">
+        <h2>{% blocktrans with limit=budget_limit %}Under {{ limit }} ₸{% endblocktrans %}</h2>
+        <a href="{% url 'item_list' %}?max_price={{ budget_limit }}&sort=cheap">{% trans "All" %}</a>
+    </div>
+    <div class="grid grid-items">
+        {% for item in budget_items %}
+            {% include 'marketplace/_item_card.html' %}
+        {% endfor %}
+    </div>
+    {% endif %}
+{% endblock %}

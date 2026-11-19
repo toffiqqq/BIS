@@ -1,0 +1,42 @@
+# Запуск всего проекта одной командой:   docker compose up
+# Сайт:     http://localhost:8000
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: student_marketplace_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d student_marketplace_db"]
+      interval: 3s
+      timeout: 3s
+      retries: 20
+
+  web:
+    build: .
+    command: >
+      sh -c "python manage.py migrate &&
+             python manage.py seed_demo &&
+             python manage.py runserver 0.0.0.0:8000"
+    environment:
+      DJANGO_DEBUG: "True"
+      DJANGO_SECRET_KEY: docker-local-dev-key-not-for-production
+      DJANGO_ALLOWED_HOSTS: "*"
+      POSTGRES_DB: student_marketplace_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_HOST: db
+      POSTGRES_PORT: "5432"
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/app          # правки в коде сразу видны без пересборки
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  pgdata:

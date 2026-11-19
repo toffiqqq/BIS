@@ -1,0 +1,316 @@
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Student Marketplace\n"
+"Language: kk\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n!=1);\n"
+
+msgid "Your listing"
+msgstr "Сіздің хабарландыруыңыз"
+
+msgid "Not enough money"
+msgstr "Қаражат жеткіліксіз"
+
+msgid "Buy this item?"
+msgstr "Бұл тауарды сатып аласыз ба?"
+
+msgid "Buy Now"
+msgstr "Сатып алу"
+
+msgid "Log in to buy"
+msgstr "Сатып алу үшін кіріңіз"
+
+msgid "New listing"
+msgstr "Жаңа хабарландыру"
+
+msgid "Publish"
+msgstr "Жариялау"
+
+msgid "Menu"
+msgstr "Мәзір"
+
+msgid "Home"
+msgstr "Басты бет"
+
+msgid "Catalog"
+msgstr "Каталог"
+
+msgid "Profile"
+msgstr "Профиль"
+
+msgid "Sell an item"
+msgstr "Зат сату"
+
+msgid "Balance"
+msgstr "Баланс"
+
+msgid "Language"
+msgstr "Тіл"
+
+msgid "Logout"
+msgstr "Шығу"
+
+msgid "Login"
+msgstr "Кіру"
+
+msgid "Register"
+msgstr "Тіркелу"
+
+msgid "Close"
+msgstr "Жабу"
+
+msgid "Buy and sell within the university"
+msgstr "Университет ішінде сатып алыңыз және сатыңыз"
+
+msgid "Search listings"
+msgstr "Хабарландырулардан іздеу"
+
+msgid "Search"
+msgstr "Іздеу"
+
+msgid "New listings"
+msgstr "Жаңа хабарландырулар"
+
+msgid "All"
+msgstr "Барлығы"
+
+msgid "No listings yet."
+msgstr "Әзірге хабарландыру жоқ."
+
+#, python-format
+msgid "Under %(limit)s ₸"
+msgstr "%(limit)s ₸-ге дейін"
+
+msgid "Title, seller or category"
+msgstr "Атауы, сатушы немесе санат"
+
+msgid "Category"
+msgstr "Санат"
+
+msgid "Price from"
+msgstr "Баға, бастап"
+
+msgid "to"
+msgstr "дейін"
+
+msgid "Sort"
+msgstr "Сұрыптау"
+
+msgid "Apply"
+msgstr "Қолдану"
+
+msgid "Reset"
+msgstr "Тазалау"
+
+msgid "Nothing found."
+msgstr "Ештеңе табылмады."
+
+msgid "Pages"
+msgstr "Беттер"
+
+msgid "Log in"
+msgstr "Кіру"
+
+msgid "No account?"
+msgstr "Аккаунт жоқ па?"
+
+msgid "Student ID"
+msgstr "Студенттік ID"
+
+msgid "Reviews"
+msgstr "Пікірлер"
+
+msgid "Active listings"
+msgstr "Белсенді хабарландырулар"
+
+msgid "Sold"
+msgstr "Сатылғандар"
+
+msgid "Purchases"
+msgstr "Сатып алулар"
+
+msgid "Item"
+msgstr "Тауар"
+
+msgid "Price"
+msgstr "Бағасы"
+
+msgid "Sold in person?"
+msgstr "Кездесуде саттыңыз ба?"
+
+msgid "Buyer username"
+msgstr "Сатып алушының логині"
+
+msgid "Mark as sold"
+msgstr "Сатылды деп белгілеу"
+
+msgid "No active listings."
+msgstr "Белсенді хабарландыру жоқ."
+
+msgid "Buyer"
+msgstr "Сатып алушы"
+
+msgid "Date"
+msgstr "Күні"
+
+msgid "Nothing sold yet."
+msgstr "Әзірге ештеңе сатылмады."
+
+msgid "Seller"
+msgstr "Сатушы"
+
+msgid "Reviewed"
+msgstr "Пікір қалдырылды"
+
+msgid "Leave a review"
+msgstr "Пікір қалдыру"
+
+msgid "No purchases yet."
+msgstr "Әзірге сатып алу жоқ."
+
+msgid "Create account"
+msgstr "Аккаунт құру"
+
+msgid "Already registered?"
+msgstr "Тіркелгенсіз бе?"
+
+msgid "On the site since"
+msgstr "Сайтта"
+
+msgid "No reviews yet."
+msgstr "Әзірге пікір жоқ."
+
+msgid "Your review"
+msgstr "Сіздің пікіріңіз"
+
+msgid "Send"
+msgstr "Жіберу"
+
+msgid "Listings"
+msgstr "Хабарландырулар"
+
+msgid "Some filter values were invalid and were ignored."
+msgstr "Сүзгінің кейбір мәндері қате, сондықтан ескерілмеді."
+
+#, python-format
+msgid "Your listing \"%(title)s\" is now live."
+msgstr "«%(title)s» хабарландыруы жарияланды."
+
+#, python-format
+msgid "You have bought \"%(title)s\"."
+msgstr "Сіз «%(title)s» сатып алдыңыз."
+
+msgid "Specify the buyer to mark this item as sold."
+msgstr "Тауарды сатылды деп белгілеу үшін сатып алушыны көрсетіңіз."
+
+#, python-format
+msgid "User \"%(name)s\" was not found."
+msgstr "«%(name)s» пайдаланушысы табылмады."
+
+#, python-format
+msgid "\"%(title)s\" is marked as sold to %(name)s."
+msgstr "«%(title)s» %(name)s пайдаланушысына сатылды деп белгіленді."
+
+msgid "Thank you! Your review has been published."
+msgstr "Рахмет! Пікіріңіз жарияланды."
+
+#, python-format
+msgid "Welcome to Student Marketplace, %(name)s!"
+msgstr "Student Marketplace-ке қош келдіңіз, %(name)s!"
+
+msgid "Title"
+msgstr "Атауы"
+
+msgid "Price (KZT)"
+msgstr "Бағасы (₸)"
+
+msgid "Image link (optional)"
+msgstr "Сурет сілтемесі (міндетті емес)"
+
+msgid "Leave empty to use the category picture."
+msgstr "Бос қалдырсаңыз, санат суреті қойылады."
+
+msgid "Item price must be greater than 0 KZT."
+msgstr "Баға 0 ₸-ден жоғары болуы керек."
+
+msgid "Item price exceeds the maximum limit (100,000 KZT)."
+msgstr "Баға ең жоғары шектен асады (100 000 ₸)."
+
+msgid ""
+"Limit exceeded: a student cannot have more than 10 active listings at the "
+"same time."
+msgstr ""
+"Шектен асты: студентте бір уақытта 10-нан көп белсенді хабарландыру "
+"болмайды."
+
+msgid "Newest first"
+msgstr "Алдымен жаңалары"
+
+msgid "Price: low to high"
+msgstr "Алдымен арзандары"
+
+msgid "Price: high to low"
+msgstr "Алдымен қымбаттары"
+
+msgid "Purchase"
+msgstr "Сатып алу"
+
+msgid "Rating"
+msgstr "Баға"
+
+msgid "Comment"
+msgstr "Пікір мәтіні"
+
+msgid "You cannot buy your own listing."
+msgstr "Өз тауарыңызды сатып ала алмайсыз."
+
+msgid "This item has already been sold."
+msgstr "Бұл тауар сатылып қойған."
+
+msgid "This item is not available for purchase."
+msgstr "Бұл тауарды сатып алу мүмкін емес."
+
+msgid "Not enough money on your balance."
+msgstr "Балансыңызда қаражат жеткіліксіз."
+
+msgid "You cannot review yourself."
+msgstr "Өзіңізге пікір қалдыра алмайсыз."
+
+msgid ""
+"You can only review a seller after buying from them, once per purchase."
+msgstr ""
+"Пікірді сатушыдан сатып алғаннан кейін ғана қалдыруға болады — бір сатып "
+"алуға бір рет."
+
+msgid "You have already reviewed this purchase."
+msgstr "Сіз бұл сатып алуға пікір қалдырып қойғансыз."
+
+msgid "English"
+msgstr "Ағылшын"
+
+msgid "Russian"
+msgstr "Орыс"
+
+msgid "Kazakh"
+msgstr "Қазақ"
+
+msgid "Textbooks"
+msgstr "Оқулықтар"
+
+msgid "Electronics"
+msgstr "Электроника"
+
+msgid "Stationery"
+msgstr "Кеңсе тауарлары"
+
+msgid "Household"
+msgstr "Тұрмыстық заттар"
+
+#, python-format
+msgid "%(counter)s review"
+msgid_plural "%(counter)s reviews"
+msgstr[0] "%(counter)s пікір"
+msgstr[1] "%(counter)s пікір"

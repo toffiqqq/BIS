@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="400" height="300">
+<defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f3e8ff"/><stop offset="1" stop-color="#e2ccff"/></linearGradient></defs>
+<rect width="400" height="300" fill="url(#g)"/>
+<circle cx="335" cy="55" r="70" fill="#fff" opacity=".18"/><circle cx="60" cy="265" r="55" fill="#fff" opacity=".14"/>
+<ellipse cx="200" cy="248" rx="120" ry="12" fill="#000" opacity=".08"/>
+<rect x="140" y="110" width="110" height="120" rx="16" fill="#7c3aed"/><path d="M250 135 a28 28 0 0 1 0 60" fill="none" stroke="#7c3aed" stroke-width="14"/>
+<path d="M170 95 q-10 -20 5 -36 M200 95 q-10 -20 5 -36 M230 95 q-10 -20 5 -36" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round" opacity=".8"/>
+<text x="195" y="185" font-family="Segoe UI,Arial" font-size="30" font-weight="800" fill="#fff" text-anchor="middle">BIS</text>
+</svg>

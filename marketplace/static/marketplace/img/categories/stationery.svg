@@ -1,3 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="400" height="300">
+<defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff6d6"/><stop offset="1" stop-color="#ffe48a"/></linearGradient></defs>
+<rect width="400" height="300" fill="url(#g)"/>
+<circle cx="335" cy="55" r="70" fill="#fff" opacity=".18"/><circle cx="60" cy="265" r="55" fill="#fff" opacity=".14"/>
+<ellipse cx="200" cy="248" rx="120" ry="12" fill="#000" opacity=".08"/>
+<g transform="rotate(-24 200 160)"><rect x="190" y="60" width="20" height="150" fill="#2f5bea"/><rect x="190" y="60" width="20" height="14" fill="#f9a8d4"/><rect x="190" y="74" width="20" height="6" fill="#9ca3af"/><path d="M190 210 l10 26 l10 -26 z" fill="#f2d3a0"/><path d="M196 226 l4 10 l4 -10 z" fill="#2b2f3a"/></g><g transform="rotate(-8 200 160)"><rect x="190" y="60" width="20" height="150" fill="#16a34a"/><rect x="190" y="60" width="20" height="14" fill="#f9a8d4"/><rect x="190" y="74" width="20" height="6" fill="#9ca3af"/><path d="M190 210 l10 26 l10 -26 z" fill="#f2d3a0"/><path d="M196 226 l4 10 l4 -10 z" fill="#2b2f3a"/></g><g transform="rotate(8 200 160)"><rect x="190" y="60" width="20" height="150" fill="#ff8a3d"/><rect x="190" y="60" width="20" height="14" fill="#f9a8d4"/><rect x="190" y="74" width="20" height="6" fill="#9ca3af"/><path d="M190 210 l10 26 l10 -26 z" fill="#f2d3a0"/><path d="M196 226 l4 10 l4 -10 z" fill="#2b2f3a"/></g><g transform="rotate(24 200 160)"><rect x="190" y="60" width="20" height="150" fill="#7c3aed"/><rect x="190" y="60" width="20" height="14" fill="#f9a8d4"/><rect x="190" y="74" width="20" height="6" fill="#9ca3af"/><path d="M190 210 l10 26 l10 -26 z" fill="#f2d3a0"/><path d="M196 226 l4 10 l4 -10 z" fill="#2b2f3a"/></g>
+</svg>
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" role="img" aria-label="Stationery">
   <defs>
     <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ede9fe"/><stop offset="1" stop-color="#ddd6fe"/></linearGradient>

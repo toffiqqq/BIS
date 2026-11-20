@@ -4,6 +4,16 @@
 {% block title %}{% trans "Register" %} — Student Marketplace{% endblock %}
 
 {% block content %}
+<div class="panel panel-narrow">
+    <h1>{% trans "Register" %}</h1>
+    <form method="POST" novalidate>
+        {% csrf_token %}
+        {% include 'marketplace/_form_fields.html' %}
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary btn-lg">{% trans "Create account" %}</button>
+        </div>
+    </form>
+    <p class="small mt-2 mb-0">{% trans "Already registered?" %} <a href="{% url 'login' %}">{% trans "Log in" %}</a></p>
 <div class="form-card form-card-wide">
     <h2>{% trans "Create Student Account" %}</h2>
 

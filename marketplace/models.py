@@ -6,7 +6,9 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 
 class User(AbstractUser):
     student_id = models.CharField(max_length=20, unique=True, null=True, blank=True)
-    role = models.CharField(max_length=20, default='Student') 
+    role = models.CharField(max_length=20, default='Student')
+    # Внутренний баланс студента. У каждого нового пользователя — 10 000 ₸.
+    balance = models.DecimalField(max_digits=12, decimal_places=2, default=10000)
 
     def __str__(self):
         return self.username
@@ -25,7 +27,11 @@ class ItemListing(models.Model):
     price = models.DecimalField(max_digits=10, decimal_places=2)
     status = models.CharField(max_length=20, default='Active') 
     created_at = models.DateTimeField(auto_now_add=True)
-    
+    # Картинка товара: путь к файлу в static/ (например
+    # "marketplace/img/items/laptop.svg") или полная ссылка https://...
+    # Если пусто — показывается заглушка по категории (работает без интернета).
+    image_url = models.CharField(max_length=500, blank=True, default='')
+
     seller = models.ForeignKey(
         User, 
         on_delete=models.RESTRICT, 
@@ -76,7 +82,24 @@ class Review(models.Model):
     
     reviewer = models.ForeignKey(User, on_delete=models.CASCADE, related_name='reviews_left')
     seller = models.ForeignKey(User, on_delete=models.CASCADE, related_name='reviews_received')
-    listing = models.ForeignKey(ItemListing, on_delete=models.SET_NULL, null=True, blank=True)
+    listing = models.ForeignKey(ItemListing, on_delete=models.SET_NULL, null=True, blank=True,
+                                related_name='reviews')
+
+    class Meta:
+        ordering = ['-created_at']
+        constraints = [
+            # Один отзыв на одну покупку (listing) от одного покупателя.
+            models.UniqueConstraint(
+                fields=['reviewer', 'listing'],
+                condition=models.Q(listing__isnull=False),
+                name='unique_review_per_purchase',
+            ),
+        ]
+
+    def clean(self):
+        super().clean()
+        if self.reviewer_id and self.seller_id and self.reviewer_id == self.seller_id:
+            raise ValidationError({'seller': 'You cannot review yourself.'})
 
     def __str__(self):
         return f"Review by {self.reviewer} ({self.rating}/5)"

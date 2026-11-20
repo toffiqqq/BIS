@@ -1,0 +1,316 @@
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Student Marketplace\n"
+"Language: ru\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+
+msgid "Your listing"
+msgstr "Ваше объявление"
+
+msgid "Not enough money"
+msgstr "Недостаточно средств"
+
+msgid "Buy this item?"
+msgstr "Купить этот товар?"
+
+msgid "Buy Now"
+msgstr "Купить"
+
+msgid "Log in to buy"
+msgstr "Войдите, чтобы купить"
+
+msgid "New listing"
+msgstr "Новое объявление"
+
+msgid "Publish"
+msgstr "Опубликовать"
+
+msgid "Menu"
+msgstr "Меню"
+
+msgid "Home"
+msgstr "Главная"
+
+msgid "Catalog"
+msgstr "Каталог"
+
+msgid "Profile"
+msgstr "Профиль"
+
+msgid "Sell an item"
+msgstr "Продать вещь"
+
+msgid "Balance"
+msgstr "Баланс"
+
+msgid "Language"
+msgstr "Язык"
+
+msgid "Logout"
+msgstr "Выйти"
+
+msgid "Login"
+msgstr "Войти"
+
+msgid "Register"
+msgstr "Регистрация"
+
+msgid "Close"
+msgstr "Закрыть"
+
+msgid "Buy and sell within the university"
+msgstr "Покупайте и продавайте внутри университета"
+
+msgid "Search listings"
+msgstr "Поиск по объявлениям"
+
+msgid "Search"
+msgstr "Найти"
+
+msgid "New listings"
+msgstr "Новые объявления"
+
+msgid "All"
+msgstr "Все"
+
+msgid "No listings yet."
+msgstr "Объявлений пока нет."
+
+#, python-format
+msgid "Under %(limit)s ₸"
+msgstr "До %(limit)s ₸"
+
+msgid "Title, seller or category"
+msgstr "Название, продавец или категория"
+
+msgid "Category"
+msgstr "Категория"
+
+msgid "Price from"
+msgstr "Цена от"
+
+msgid "to"
+msgstr "до"
+
+msgid "Sort"
+msgstr "Сортировка"
+
+msgid "Apply"
+msgstr "Применить"
+
+msgid "Reset"
+msgstr "Сбросить"
+
+msgid "Nothing found."
+msgstr "Ничего не найдено."
+
+msgid "Pages"
+msgstr "Страницы"
+
+msgid "Log in"
+msgstr "Войти"
+
+msgid "No account?"
+msgstr "Нет аккаунта?"
+
+msgid "Student ID"
+msgstr "Студенческий ID"
+
+msgid "Reviews"
+msgstr "Отзывы"
+
+msgid "Active listings"
+msgstr "Активные объявления"
+
+msgid "Sold"
+msgstr "Проданные"
+
+msgid "Purchases"
+msgstr "Покупки"
+
+msgid "Item"
+msgstr "Товар"
+
+msgid "Price"
+msgstr "Цена"
+
+msgid "Sold in person?"
+msgstr "Продали при встрече?"
+
+msgid "Buyer username"
+msgstr "Логин покупателя"
+
+msgid "Mark as sold"
+msgstr "Отметить проданным"
+
+msgid "No active listings."
+msgstr "Нет активных объявлений."
+
+msgid "Buyer"
+msgstr "Покупатель"
+
+msgid "Date"
+msgstr "Дата"
+
+msgid "Nothing sold yet."
+msgstr "Пока ничего не продано."
+
+msgid "Seller"
+msgstr "Продавец"
+
+msgid "Reviewed"
+msgstr "Отзыв оставлен"
+
+msgid "Leave a review"
+msgstr "Оставить отзыв"
+
+msgid "No purchases yet."
+msgstr "Покупок пока нет."
+
+msgid "Create account"
+msgstr "Создать аккаунт"
+
+msgid "Already registered?"
+msgstr "Уже зарегистрированы?"
+
+msgid "On the site since"
+msgstr "На сайте с"
+
+msgid "No reviews yet."
+msgstr "Отзывов пока нет."
+
+msgid "Your review"
+msgstr "Ваш отзыв"
+
+msgid "Send"
+msgstr "Отправить"
+
+msgid "Listings"
+msgstr "Объявления"
+
+msgid "Some filter values were invalid and were ignored."
+msgstr "Некоторые значения фильтра неверны и были проигнорированы."
+
+#, python-format
+msgid "Your listing \"%(title)s\" is now live."
+msgstr "Объявление «%(title)s» опубликовано."
+
+#, python-format
+msgid "You have bought \"%(title)s\"."
+msgstr "Вы купили «%(title)s»."
+
+msgid "Specify the buyer to mark this item as sold."
+msgstr "Укажите покупателя, чтобы отметить товар проданным."
+
+#, python-format
+msgid "User \"%(name)s\" was not found."
+msgstr "Пользователь «%(name)s» не найден."
+
+#, python-format
+msgid "\"%(title)s\" is marked as sold to %(name)s."
+msgstr "«%(title)s» отмечен как проданный пользователю %(name)s."
+
+msgid "Thank you! Your review has been published."
+msgstr "Спасибо! Ваш отзыв опубликован."
+
+#, python-format
+msgid "Welcome to Student Marketplace, %(name)s!"
+msgstr "Добро пожаловать в Student Marketplace, %(name)s!"
+
+msgid "Title"
+msgstr "Название"
+
+msgid "Price (KZT)"
+msgstr "Цена (₸)"
+
+msgid "Image link (optional)"
+msgstr "Ссылка на картинку (необязательно)"
+
+msgid "Leave empty to use the category picture."
+msgstr "Оставьте пустым — будет картинка категории."
+
+msgid "Item price must be greater than 0 KZT."
+msgstr "Цена должна быть больше 0 ₸."
+
+msgid "Item price exceeds the maximum limit (100,000 KZT)."
+msgstr "Цена превышает максимум (100 000 ₸)."
+
+msgid ""
+"Limit exceeded: a student cannot have more than 10 active listings at the "
+"same time."
+msgstr ""
+"Превышен лимит: у студента не может быть больше 10 активных объявлений "
+"одновременно."
+
+msgid "Newest first"
+msgstr "Сначала новые"
+
+msgid "Price: low to high"
+msgstr "Сначала дешёвые"
+
+msgid "Price: high to low"
+msgstr "Сначала дорогие"
+
+msgid "Purchase"
+msgstr "Покупка"
+
+msgid "Rating"
+msgstr "Оценка"
+
+msgid "Comment"
+msgstr "Комментарий"
+
+msgid "You cannot buy your own listing."
+msgstr "Нельзя купить собственный товар."
+
+msgid "This item has already been sold."
+msgstr "Этот товар уже продан."
+
+msgid "This item is not available for purchase."
+msgstr "Этот товар недоступен для покупки."
+
+msgid "Not enough money on your balance."
+msgstr "На балансе недостаточно средств."
+
+msgid "You cannot review yourself."
+msgstr "Нельзя оставить отзыв самому себе."
+
+msgid ""
+"You can only review a seller after buying from them, once per purchase."
+msgstr ""
+"Отзыв можно оставить только после покупки у продавца — один раз на покупку."
+
+msgid "You have already reviewed this purchase."
+msgstr "Вы уже оставили отзыв на эту покупку."
+
+msgid "English"
+msgstr "Английский"
+
+msgid "Russian"
+msgstr "Русский"
+
+msgid "Kazakh"
+msgstr "Казахский"
+
+msgid "Textbooks"
+msgstr "Учебники"
+
+msgid "Electronics"
+msgstr "Электроника"
+
+msgid "Stationery"
+msgstr "Канцтовары"
+
+msgid "Household"
+msgstr "Для быта"
+
+#, python-format
+msgid "%(counter)s review"
+msgid_plural "%(counter)s reviews"
+msgstr[0] "%(counter)s отзыв"
+msgstr[1] "%(counter)s отзыва"
+msgstr[2] "%(counter)s отзывов"

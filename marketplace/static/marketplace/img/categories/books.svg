@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" role="img" aria-label="Books">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#e0e7ff"/><stop offset="1" stop-color="#c7d2fe"/></linearGradient>
+  </defs>
+  <rect width="800" height="600" fill="url(#bg)"/>
+  <circle cx="650" cy="110" r="90" fill="#fff" opacity=".35"/>
+  <circle cx="120" cy="500" r="120" fill="#fff" opacity=".25"/>
+  <ellipse cx="400" cy="470" rx="230" ry="18" fill="#312e81" opacity=".12"/>
+  <rect x="215" y="385" width="370" height="70" rx="10" fill="#4338ca"/>
+  <rect x="235" y="400" width="330" height="10" rx="5" fill="#fff" opacity=".55"/>
+  <rect x="235" y="425" width="200" height="10" rx="5" fill="#fff" opacity=".3"/>
+  <rect x="250" y="315" width="320" height="70" rx="10" fill="#f59e0b"/>
+  <rect x="270" y="330" width="280" height="10" rx="5" fill="#fff" opacity=".6"/>
+  <rect x="270" y="355" width="160" height="10" rx="5" fill="#fff" opacity=".35"/>
+  <rect x="235" y="245" width="300" height="70" rx="10" fill="#10b981"/>
+  <rect x="255" y="260" width="260" height="10" rx="5" fill="#fff" opacity=".6"/>
+  <rect x="255" y="285" width="140" height="10" rx="5" fill="#fff" opacity=".35"/>
+</svg>

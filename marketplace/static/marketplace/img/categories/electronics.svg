@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" role="img" aria-label="Electronics">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#cffafe"/><stop offset="1" stop-color="#bae6fd"/></linearGradient>
+    <linearGradient id="scr" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#38bdf8"/><stop offset="1" stop-color="#6366f1"/></linearGradient>
+  </defs>
+  <rect width="800" height="600" fill="url(#bg)"/>
+  <circle cx="140" cy="110" r="100" fill="#fff" opacity=".35"/>
+  <circle cx="680" cy="500" r="130" fill="#fff" opacity=".25"/>
+  <ellipse cx="400" cy="452" rx="250" ry="16" fill="#0c4a6e" opacity=".14"/>
+  <rect x="270" y="170" width="260" height="180" rx="16" fill="#1e293b"/>
+  <rect x="286" y="186" width="228" height="148" rx="8" fill="url(#scr)"/>
+  <path d="M300 320 L360 250 L400 295 L440 235 L500 320 Z" fill="#fff" opacity=".28"/>
+  <circle cx="470" cy="220" r="14" fill="#fff" opacity=".6"/>
+  <path d="M225 352 H575 L590 395 Q592 410 575 410 H225 Q208 410 210 395 Z" fill="#334155"/>
+  <rect x="355" y="362" width="90" height="10" rx="5" fill="#94a3b8"/>
+</svg>

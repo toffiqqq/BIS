@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" role="img" aria-label="Furniture">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fef3c7"/><stop offset="1" stop-color="#fed7aa"/></linearGradient>
+  </defs>
+  <rect width="800" height="600" fill="url(#bg)"/>
+  <circle cx="660" cy="120" r="95" fill="#fff" opacity=".4"/>
+  <circle cx="110" cy="490" r="125" fill="#fff" opacity=".25"/>
+  <ellipse cx="400" cy="458" rx="230" ry="16" fill="#7c2d12" opacity=".14"/>
+  <rect x="255" y="225" width="290" height="120" rx="34" fill="#ea580c"/>
+  <rect x="215" y="300" width="70" height="125" rx="30" fill="#c2410c"/>
+  <rect x="515" y="300" width="70" height="125" rx="30" fill="#c2410c"/>
+  <rect x="255" y="320" width="290" height="85" rx="26" fill="#f97316"/>
+  <rect x="285" y="340" width="230" height="8" rx="4" fill="#fff" opacity=".35"/>
+  <rect x="250" y="418" width="16" height="32" rx="6" fill="#7c2d12"/>
+  <rect x="534" y="418" width="16" height="32" rx="6" fill="#7c2d12"/>
+</svg>

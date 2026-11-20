@@ -1,48 +1,40 @@
-{% load i18n %}
+{% load i18n static %}
 <!DOCTYPE html>
 <html lang="{{ LANGUAGE_CODE|default:'en' }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Student Marketplace{% endblock %}</title>
-    <!-- Подключение Bootstrap 5 CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Локальные стили: сайт работает без интернета -->
+    <link rel="stylesheet" href="{% static 'marketplace/css/style.css' %}">
 </head>
-<body class="bg-light d-flex flex-column min-vh-100">
+<body>
 
     <!-- Навигационная шапка -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm">
-        <div class="container">
-            <a class="navbar-brand fw-bold" href="{% url 'item_list' %}">
-                🎓 Student Marketplace
+    <header class="site-header">
+        <div class="container header-bar">
+            <a class="brand" href="{% url 'item_list' %}">
+                <span class="brand-mark" aria-hidden="true">🎓</span>
+                Student Marketplace
             </a>
 
             <!-- Кнопка-бургер для мобильных экранов -->
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar" aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
+            <button class="nav-toggle" type="button" aria-controls="mainMenu" aria-expanded="false" aria-label="{% trans 'Toggle navigation' %}">☰</button>
 
-            <div class="collapse navbar-collapse" id="mainNavbar">
-                <!-- Левая часть меню -->
-                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'item_list' %}">{% trans "Home" %}</a>
-                    </li>
+            <div class="header-menu" id="mainMenu">
+                <nav class="nav-links">
+                    <a class="nav-link" href="{% url 'item_list' %}">{% trans "Home" %}</a>
                     {% if user.is_authenticated %}
-                        <li class="nav-item">
-                            <a class="nav-link fw-semibold text-white" href="{% url 'add_item' %}">+ {% trans "Add Item" %}</a>
-                        </li>
+                        <a class="nav-link is-cta" href="{% url 'add_item' %}">+ {% trans "Add Item" %}</a>
                     {% endif %}
-                </ul>
+                </nav>
 
-                <!-- Правая часть меню: Язык и Аккаунт -->
-                <div class="d-flex flex-column flex-lg-row align-items-lg-center gap-2">
-                    
+                <div class="header-actions">
                     <!-- Переключатель языков (Django i18n) -->
-                    <form action="{% url 'set_language' %}" method="post" class="d-flex me-lg-2">
+                    <form action="{% url 'set_language' %}" method="post">
                         {% csrf_token %}
                         <input name="next" type="hidden" value="{{ request.get_full_path }}">
-                        <select name="language" onchange="this.form.submit()" class="form-select form-select-sm bg-light text-dark border-0">
+                        <select name="language" onchange="this.form.submit()" class="lang-select" aria-label="{% trans 'Language' %}">
                             {% get_current_language as CURRENT_LANG %}
                             {% get_available_languages as LANGUAGES %}
                             {% for lang_code, lang_name in LANGUAGES %}
@@ -53,40 +45,43 @@
                         </select>
                     </form>
 
-                    <!-- Кнопки пользователя -->
                     {% if user.is_authenticated %}
-                        <span class="navbar-text text-white me-2">
-                            {% trans "Welcome" %}, <strong>{{ user.username }}</strong>!
-                        </span>
-                        <a href="{% url 'logout' %}" class="btn btn-outline-light btn-sm">{% trans "Logout" %}</a>
+                        <span class="welcome">{% trans "Welcome" %}, <strong>{{ user.username }}</strong>!</span>
+                        <a href="{% url 'logout' %}" class="btn btn-ghost-light btn-sm">{% trans "Logout" %}</a>
                     {% else %}
-                        <a href="{% url 'login' %}" class="btn btn-outline-light btn-sm">{% trans "Login" %}</a>
-                        <a href="{% url 'register' %}" class="btn btn-light btn-sm text-primary fw-semibold">{% trans "Register" %}</a>
+                        <a href="{% url 'login' %}" class="btn btn-ghost-light btn-sm">{% trans "Login" %}</a>
+                        <a href="{% url 'register' %}" class="btn btn-light btn-sm">{% trans "Register" %}</a>
                     {% endif %}
                 </div>
             </div>
         </div>
-    </nav>
+    </header>
 
-    <!-- Блок для системных уведомлений (messages) -->
-    <div class="container mt-3">
-        {% if messages %}
+    <!-- Системные уведомления (messages) -->
+    {% if messages %}
+        <div class="container messages">
             {% for message in messages %}
-                <div class="alert alert-{{ message.tags|default:'info' }} alert-dismissible fade show" role="alert">
-                    {{ message }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                <div class="alert alert-{{ message.tags|default:'info' }}" role="alert">
+                    <span>{{ message }}</span>
+                    <button type="button" class="alert-close" aria-label="{% trans 'Close' %}">&times;</button>
                 </div>
             {% endfor %}
-        {% endif %}
-    </div>
+        </div>
+    {% endif %}
 
     <!-- Основной контент страницы -->
-    <main class="container my-4 flex-grow-1">
+    <main class="container page">
         {% block content %}
         {% endblock %}
     </main>
 
-    <!-- Подвал (Footer) -->
-    <footer class="bg-white border-top py-3 mt-auto text-center text-muted small">
+    <!-- Подвал -->
+    <footer class="site-footer">
         <div class="container">
-            &copy
+            &copy; {% now "Y" %} Student Marketplace &middot; KBTU
+        </div>
+    </footer>
+
+    <script src="{% static 'marketplace/js/main.js' %}"></script>
+</body>
+</html>

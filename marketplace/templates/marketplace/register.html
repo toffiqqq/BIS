@@ -14,5 +14,47 @@
         </div>
     </form>
     <p class="small mt-2 mb-0">{% trans "Already registered?" %} <a href="{% url 'login' %}">{% trans "Log in" %}</a></p>
+<div class="form-card form-card-wide">
+    <h2>{% trans "Create Student Account" %}</h2>
+
+    <form method="POST" novalidate>
+        {% csrf_token %}
+
+        <!-- Общие ошибки формы -->
+        {% if form.non_field_errors %}
+            <div class="alert alert-error">
+                <div>
+                    {% for error in form.non_field_errors %}
+                        <div>{{ error }}</div>
+                    {% endfor %}
+                </div>
+            </div>
+        {% endif %}
+
+        <!-- Все поля регистрации (Username, Email, Student ID, Passwords) -->
+        {% for field in form %}
+            <div class="field">
+                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {{ field }}
+
+                {% if field.help_text %}
+                    <div class="field-help">{{ field.help_text|safe }}</div>
+                {% endif %}
+
+                {% for error in field.errors %}
+                    <div class="field-error">{{ error }}</div>
+                {% endfor %}
+            </div>
+        {% endfor %}
+
+        <button type="submit" class="btn btn-primary btn-lg btn-block">{% trans "Register" %}</button>
+    </form>
+
+    <hr class="form-divider">
+
+    <p class="form-footer">
+        {% trans "Already have an account?" %}
+        <a href="{% url 'login' %}">{% trans "Login" %}</a>
+    </p>
 </div>
 {% endblock %}

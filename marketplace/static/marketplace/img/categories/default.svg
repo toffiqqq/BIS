@@ -5,3 +5,17 @@
 <ellipse cx="200" cy="248" rx="120" ry="12" fill="#000" opacity=".08"/>
 <path d="M120 120 l80 -40 l80 40 v90 l-80 40 l-80 -40 z" fill="#c8a06a"/><path d="M120 120 l80 40 l80 -40" fill="none" stroke="#a37d4b" stroke-width="4"/><path d="M200 160 v90" stroke="#a37d4b" stroke-width="4"/><path d="M160 100 l80 40" stroke="#e8d3ad" stroke-width="10"/>
 </svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" role="img" aria-label="Item">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#e2e8f0"/><stop offset="1" stop-color="#cbd5e1"/></linearGradient>
+    <linearGradient id="bag" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#6366f1"/><stop offset="1" stop-color="#4338ca"/></linearGradient>
+  </defs>
+  <rect width="800" height="600" fill="url(#bg)"/>
+  <circle cx="660" cy="115" r="95" fill="#fff" opacity=".4"/>
+  <circle cx="120" cy="490" r="125" fill="#fff" opacity=".3"/>
+  <ellipse cx="400" cy="468" rx="150" ry="14" fill="#1e293b" opacity=".14"/>
+  <path d="M340 245 V215 a60 60 0 0 1 120 0 V245" fill="none" stroke="#312e81" stroke-width="14" stroke-linecap="round"/>
+  <rect x="285" y="240" width="230" height="205" rx="24" fill="url(#bag)"/>
+  <circle cx="340" cy="262" r="8" fill="#e0e7ff"/><circle cx="460" cy="262" r="8" fill="#e0e7ff"/>
+  <path d="M400 320 l22 22 -12 40 -20 -14 -20 14 -12 -40 z" fill="#fff" opacity=".85" transform="translate(0 -8)"/>
+</svg>

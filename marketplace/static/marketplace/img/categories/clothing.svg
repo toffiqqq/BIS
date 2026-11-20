@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" role="img" aria-label="Clothing">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fce7f3"/><stop offset="1" stop-color="#fbcfe8"/></linearGradient>
+  </defs>
+  <rect width="800" height="600" fill="url(#bg)"/>
+  <circle cx="140" cy="120" r="95" fill="#fff" opacity=".4"/>
+  <circle cx="680" cy="500" r="125" fill="#fff" opacity=".25"/>
+  <ellipse cx="400" cy="462" rx="170" ry="14" fill="#831843" opacity=".13"/>
+  <path d="M310 170 L360 148 Q400 190 440 148 L490 170 L548 238 L498 276 L478 254 L478 440 L322 440 L322 254 L302 276 L252 238 Z" fill="#db2777"/>
+  <path d="M360 148 Q400 190 440 148 Q400 214 360 148 Z" fill="#9d174d"/>
+  <rect x="352" y="330" width="96" height="10" rx="5" fill="#fff" opacity=".4"/>
+  <rect x="372" y="354" width="56" height="10" rx="5" fill="#fff" opacity=".25"/>
+</svg>

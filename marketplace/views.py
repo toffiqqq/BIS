@@ -96,6 +96,57 @@ def item_list(request):
         'total': page.paginator.count,
     })
 
+from django.db.models import Count, Q
+from django.views.decorators.http import require_POST
+
+from .models import User, ItemListing, Category, Transaction, Review
+from .forms import StudentRegisterForm, ItemListingForm
+from .filters import ItemFilterForm
+from .services import PurchaseError, purchase_listing
+
+def item_list(request):
+    filters = ItemFilterForm(request.GET).cleaned_or_empty()
+    query = filters['q']
+    category = filters['category']
+    min_price = filters['min_price']
+    max_price = filters['max_price']
+
+    items = (
+        ItemListing.objects.filter(status='Active')
+        .select_related('category', 'seller')
+        .order_by('-created_at')
+    )
+
+    if query:
+        items = items.filter(
+            Q(title__icontains=query) |
+            Q(seller__username__icontains=query) |
+            Q(category__name__icontains=query)
+        )
+    if category:
+        items = items.filter(category=category)
+    if min_price is not None:
+        items = items.filter(price__gte=min_price)
+    if max_price is not None:
+        items = items.filter(price__lte=max_price)
+
+    categories = Category.objects.annotate(
+        active_count=Count('items', filter=Q(items__status='Active'))
+    ).order_by('name')
+
+    has_filters = bool(query or category or min_price is not None or max_price is not None)
+    context = {
+        'items': items,
+        'query': query,
+        'categories': categories,
+        # Плитки в hero-баннере: 4 самые «живые» категории.
+        'hero_categories': sorted(categories, key=lambda c: (-c.active_count, c.name))[:4],
+        'selected_category': category.pk if category else None,
+        'min_price': min_price if min_price is not None else '',
+        'max_price': max_price if max_price is not None else '',
+        'has_filters': has_filters,
+    }
+    return render(request, 'marketplace/item_list.html', context)
 
 @login_required
 def add_item(request):

@@ -1,5 +1,6 @@
 {% extends 'marketplace/base.html' %}
 {% load i18n %}
+{% load i18n static marketplace_extras %}
 
 {% block title %}{% trans "Catalog" %} — Student Marketplace{% endblock %}
 
@@ -64,4 +65,126 @@
         {% endif %}
     </nav>
     {% endif %}
+    <!-- Hero-баннер: только на «чистой» главной, без поиска и фильтров -->
+    {% if not has_filters %}
+        <section class="hero">
+            <span class="hero-eyebrow">🎓 {% trans "Made by students, for students" %}</span>
+            <h1 class="hero-title">{% blocktrans %}Buy and sell <span>on campus</span> in a few clicks{% endblocktrans %}</h1>
+            <p class="hero-subtitle">
+                {% trans "Textbooks, gadgets, furniture and more from fellow KBTU students — find what you need or sell what you don't." %}
+            </p>
+
+            <form method="GET" action="{% url 'item_list' %}#catalog" class="hero-search" role="search">
+                <label for="hero-q" class="visually-hidden">{% trans "Search" %}</label>
+                <input id="hero-q" type="text" name="q" autocomplete="off"
+                       placeholder="{% trans 'What are you looking for?' %}">
+                <button type="submit" class="btn btn-accent">{% trans "Search" %}</button>
+            </form>
+
+            {% if hero_categories %}
+                <h2 class="hero-tiles-title">{% trans "Popular categories" %}</h2>
+                <div class="category-tiles">
+                    {% for cat in hero_categories %}
+                        <a class="tile" href="{% url 'item_list' %}?category={{ cat.pk }}#catalog">
+                            <img class="tile-img" src="{% category_image cat.name %}" alt="" loading="lazy">
+                            <span class="tile-text">
+                                <span class="tile-name">{{ cat.name }}</span>
+                                <span class="tile-count">{{ cat.active_count }} {% trans "listings" %}</span>
+                            </span>
+                        </a>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </section>
+    {% endif %}
+
+    <!-- Заголовок каталога -->
+    <div class="catalog-head" id="catalog">
+        <h2>{% trans "Active Listings" %}</h2>
+        <span class="results-count">{{ items|length }} {% trans "found" %}</span>
+    </div>
+
+    <!-- Поиск + фильтры: категория, минимальная и максимальная цена -->
+    <form method="GET" action="{% url 'item_list' %}#catalog" class="filters">
+        <div class="field field-search">
+            <label for="f-q">{% trans "Search" %}</label>
+            <input id="f-q" type="text" name="q" value="{{ query|default:'' }}"
+                   placeholder="{% trans 'Search by title, seller, or category...' %}">
+        </div>
+
+        <div class="field">
+            <label for="f-category">{% trans "Category" %}</label>
+            <select id="f-category" name="category">
+                <option value="">{% trans "All categories" %}</option>
+                {% for cat in categories %}
+                    <option value="{{ cat.pk }}" {% if cat.pk == selected_category %}selected{% endif %}>{{ cat.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="field">
+            <label for="f-min">{% trans "Min price, KZT" %}</label>
+            <input id="f-min" type="number" name="min_price" min="0" step="any" inputmode="decimal"
+                   value="{{ min_price }}" placeholder="0">
+        </div>
+
+        <div class="field">
+            <label for="f-max">{% trans "Max price, KZT" %}</label>
+            <input id="f-max" type="number" name="max_price" min="0" step="any" inputmode="decimal"
+                   value="{{ max_price }}" placeholder="100000">
+        </div>
+
+        <div class="filters-actions">
+            <button type="submit" class="btn btn-primary">{% trans "Apply" %}</button>
+            {% if has_filters %}
+                <a href="{% url 'item_list' %}" class="btn btn-outline">{% trans "Reset" %}</a>
+            {% endif %}
+        </div>
+    </form>
+
+    <!-- Сетка карточек товаров -->
+    <div class="card-grid">
+        {% for item in items %}
+            <article class="card">
+                <!-- Картинка-заглушка по категории (локальный файл из static/) -->
+                <div class="card-media">
+                    <img src="{% category_image item.category.name %}" alt="{{ item.title }}" loading="lazy">
+                    <span class="badge badge-category">{{ item.category.name }}</span>
+                    <span class="badge badge-status">{{ item.status }}</span>
+                </div>
+
+                <div class="card-body">
+                    <h3 class="card-title">{{ item.title }}</h3>
+                    <p class="card-price">{{ item.price }} <small>KZT</small></p>
+
+                    <div class="card-meta">
+                        <div>👤 {% trans "Seller" %}: <strong>{{ item.seller.username }}</strong></div>
+                        <div>🕒 {{ item.created_at|date:"d M Y, H:i" }}</div>
+                    </div>
+
+                    {% if user.is_authenticated and user == item.seller %}
+                        <a href="{% url 'mark_as_sold' item.id %}" class="btn btn-success-outline btn-block">
+                            ✓ {% trans "Mark as Sold" %}
+                        </a>
+                    {% endif %}
+                </div>
+            </article>
+        {% empty %}
+            <!-- Если товаров нет или ничего не найдено -->
+            <div class="empty-state">
+                <img src="{% static 'marketplace/img/categories/default.svg' %}" alt="">
+                <h3>{% trans "No items found." %}</h3>
+                <p>
+                    {% if has_filters %}
+                        {% trans "Try changing your search keywords or reset the filter." %}
+                    {% else %}
+                        {% trans "Be the first to list an item on Student Marketplace!" %}
+                    {% endif %}
+                </p>
+                {% if user.is_authenticated %}
+                    <a href="{% url 'add_item' %}" class="btn btn-primary">+ {% trans "Add Item" %}</a>
+                {% endif %}
+            </div>
+        {% endfor %}
+    </div>
 {% endblock %}

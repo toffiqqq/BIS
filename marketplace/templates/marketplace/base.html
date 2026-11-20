@@ -1,6 +1,9 @@
 {% load i18n static %}<!DOCTYPE html>
 {% get_current_language as CURRENT_LANG %}
 <html lang="{{ CURRENT_LANG|default:'en' }}">
+{% load i18n static %}
+<!DOCTYPE html>
+<html lang="{{ LANGUAGE_CODE|default:'en' }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -36,6 +39,32 @@
                         <a href="{% url 'profile' %}" class="balance" title="{% trans 'Balance' %}">{{ user.balance|floatformat:"0g" }} ₸</a>
                     {% endif %}
 
+    <!-- Локальные стили: сайт работает без интернета -->
+    <link rel="stylesheet" href="{% static 'marketplace/css/style.css' %}">
+</head>
+<body>
+
+    <!-- Навигационная шапка -->
+    <header class="site-header">
+        <div class="container header-bar">
+            <a class="brand" href="{% url 'item_list' %}">
+                <span class="brand-mark" aria-hidden="true">🎓</span>
+                Student Marketplace
+            </a>
+
+            <!-- Кнопка-бургер для мобильных экранов -->
+            <button class="nav-toggle" type="button" aria-controls="mainMenu" aria-expanded="false" aria-label="{% trans 'Toggle navigation' %}">☰</button>
+
+            <div class="header-menu" id="mainMenu">
+                <nav class="nav-links">
+                    <a class="nav-link" href="{% url 'item_list' %}">{% trans "Home" %}</a>
+                    {% if user.is_authenticated %}
+                        <a class="nav-link is-cta" href="{% url 'add_item' %}">+ {% trans "Add Item" %}</a>
+                    {% endif %}
+                </nav>
+
+                <div class="header-actions">
+                    <!-- Переключатель языков (Django i18n) -->
                     <form action="{% url 'set_language' %}" method="post">
                         {% csrf_token %}
                         <input name="next" type="hidden" value="{{ request.get_full_path }}">
@@ -43,6 +72,12 @@
                             {% get_available_languages as LANGUAGES %}
                             {% for lang_code, lang_name in LANGUAGES %}
                                 <option value="{{ lang_code }}" {% if lang_code == CURRENT_LANG %}selected{% endif %}>{{ lang_code|upper }}</option>
+                            {% get_current_language as CURRENT_LANG %}
+                            {% get_available_languages as LANGUAGES %}
+                            {% for lang_code, lang_name in LANGUAGES %}
+                                <option value="{{ lang_code }}" {% if lang_code == CURRENT_LANG %}selected{% endif %}>
+                                    {{ lang_code|upper }}
+                                </option>
                             {% endfor %}
                         </select>
                     </form>
@@ -78,6 +113,40 @@
 
     <footer class="footer">
         <div class="container">© 2026 Student Marketplace</div>
+                        <span class="welcome">{% trans "Welcome" %}, <strong>{{ user.username }}</strong>!</span>
+                        <a href="{% url 'logout' %}" class="btn btn-ghost-light btn-sm">{% trans "Logout" %}</a>
+                    {% else %}
+                        <a href="{% url 'login' %}" class="btn btn-ghost-light btn-sm">{% trans "Login" %}</a>
+                        <a href="{% url 'register' %}" class="btn btn-light btn-sm">{% trans "Register" %}</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Системные уведомления (messages) -->
+    {% if messages %}
+        <div class="container messages">
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags|default:'info' }}" role="alert">
+                    <span>{{ message }}</span>
+                    <button type="button" class="alert-close" aria-label="{% trans 'Close' %}">&times;</button>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <!-- Основной контент страницы -->
+    <main class="container page">
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <!-- Подвал -->
+    <footer class="site-footer">
+        <div class="container">
+            &copy; {% now "Y" %} Student Marketplace &middot; KBTU
+        </div>
     </footer>
 
     <script src="{% static 'marketplace/js/main.js' %}"></script>

@@ -11,44 +11,41 @@ msgstr ""
 msgid "Your listing"
 msgstr "Ваше объявление"
 
-msgid "Not enough money"
-msgstr "Недостаточно средств"
-
-msgid "Buy this item?"
-msgstr "Купить этот товар?"
-
-msgid "Buy Now"
-msgstr "Купить"
+msgid "Seller"
+msgstr "Продавец"
 
 msgid "Log in to buy"
 msgstr "Войдите, чтобы купить"
 
-msgid "New listing"
+msgid "Post a New Item"
 msgstr "Новое объявление"
 
-msgid "Publish"
+msgid "Description and specifications"
+msgstr "Описание и характеристики"
+
+msgid "Submit Listing"
 msgstr "Опубликовать"
 
-msgid "Menu"
+msgid "Cancel"
+msgstr "Отмена"
+
+msgid "Toggle navigation"
 msgstr "Меню"
 
 msgid "Home"
 msgstr "Главная"
 
-msgid "Catalog"
-msgstr "Каталог"
-
 msgid "Profile"
 msgstr "Профиль"
 
-msgid "Sell an item"
-msgstr "Продать вещь"
-
-msgid "Balance"
-msgstr "Баланс"
+msgid "Add Item"
+msgstr "Добавить товар"
 
 msgid "Language"
 msgstr "Язык"
+
+msgid "Balance"
+msgstr "Баланс"
 
 msgid "Logout"
 msgstr "Выйти"
@@ -62,42 +59,115 @@ msgstr "Регистрация"
 msgid "Close"
 msgstr "Закрыть"
 
-msgid "Buy and sell within the university"
-msgstr "Покупайте и продавайте внутри университета"
+msgid "Sold"
+msgstr "Продано"
 
-msgid "Search listings"
-msgstr "Поиск по объявлениям"
+msgid "This item has already been sold."
+msgstr "Этот товар уже продан."
 
-msgid "Search"
-msgstr "Найти"
+msgid ""
+"This is your listing. When you sell it in person, mark it as sold in your "
+"profile."
+msgstr ""
+"Это ваше объявление. Если продадите его при встрече, отметьте продажу в "
+"профиле."
 
-msgid "New listings"
-msgstr "Новые объявления"
+msgid "Go to profile"
+msgstr "Перейти в профиль"
 
-msgid "All"
-msgstr "Все"
+msgid "Not enough money"
+msgstr "Недостаточно средств"
 
-msgid "No listings yet."
-msgstr "Объявлений пока нет."
+msgid "Top up"
+msgstr "Пополнить"
 
-#, python-format
-msgid "Under %(limit)s ₸"
-msgstr "До %(limit)s ₸"
+msgid "Buy this item?"
+msgstr "Купить этот товар?"
 
-msgid "Title, seller or category"
-msgstr "Название, продавец или категория"
+msgid "Buy Now"
+msgstr "Купить"
+
+msgid "No reviews yet."
+msgstr "Отзывов пока нет."
+
+msgid "Description"
+msgstr "Описание"
+
+msgid "The seller has not added a description."
+msgstr "Продавец не добавил описание."
+
+msgid "Specifications"
+msgstr "Характеристики"
 
 msgid "Category"
 msgstr "Категория"
 
-msgid "Price from"
-msgstr "Цена от"
+msgid "Condition"
+msgstr "Состояние"
 
-msgid "to"
-msgstr "до"
+msgid "Weight"
+msgstr "Вес"
 
-msgid "Sort"
-msgstr "Сортировка"
+msgid "kg"
+msgstr "кг"
+
+msgid "Size (L × W × H)"
+msgstr "Размеры (Д × Ш × В)"
+
+msgid "cm"
+msgstr "см"
+
+msgid "Published"
+msgstr "Опубликовано"
+
+msgid "More from this seller"
+msgstr "Другие товары продавца"
+
+#, python-format
+msgid "Your balance: %(balance)s ₸."
+msgstr "Ваш баланс: %(balance)s ₸."
+
+msgid "Catalog"
+msgstr "Каталог"
+
+msgid "For KBTU students"
+msgstr "Для студентов КБТУ"
+
+msgid "Textbooks, electronics and things for the dorm from other students."
+msgstr "Учебники, техника и вещи для общежития от других студентов."
+
+msgid "Search"
+msgstr "Найти"
+
+msgid "What are you looking for?"
+msgstr "Что вы ищете?"
+
+msgid "Popular categories"
+msgstr "Популярные категории"
+
+msgid "listings"
+msgstr "объявл."
+
+msgid "Active Listings"
+msgstr "Активные объявления"
+
+msgid "found"
+msgstr "найдено"
+
+msgid "Search query"
+msgstr "Поиск"
+
+msgid "Search by title, seller, or category..."
+msgstr "Название, продавец или категория"
+
+msgid "All categories"
+msgstr "Все категории"
+
+msgid "Min price, KZT"
+msgstr "Цена от, ₸"
+
+msgid "Max price, KZT"
+msgstr "Цена до, ₸"
 
 msgid "Apply"
 msgstr "Применить"
@@ -105,32 +175,63 @@ msgstr "Применить"
 msgid "Reset"
 msgstr "Сбросить"
 
-msgid "Nothing found."
+msgid "No items found."
 msgstr "Ничего не найдено."
 
-msgid "Pages"
-msgstr "Страницы"
+msgid "Try changing your search keywords or reset the filter."
+msgstr "Измените запрос или сбросьте фильтры."
 
-msgid "Log in"
-msgstr "Войти"
+msgid "No listings yet."
+msgstr "Объявлений пока нет."
 
-msgid "No account?"
+msgid "Buy and sell <span>on campus</span> in a few clicks"
+msgstr "Покупайте и продавайте <span>в кампусе</span>"
+
+msgid "Sign In"
+msgstr "Вход"
+
+msgid "Enter your phone number and we will send you a code."
+msgstr "Введите номер телефона, и мы пришлём код."
+
+msgid "Get code"
+msgstr "Получить код"
+
+msgid "Don't have an account?"
 msgstr "Нет аккаунта?"
 
 msgid "Student ID"
-msgstr "Студенческий ID"
+msgstr "Номер студенческого"
+
+msgid "On the site since"
+msgstr "На сайте с"
 
 msgid "Reviews"
 msgstr "Отзывы"
 
-msgid "Active listings"
-msgstr "Активные объявления"
+msgid "Selling now"
+msgstr "Продаю"
 
-msgid "Sold"
-msgstr "Проданные"
+msgid "Bought"
+msgstr "Куплено"
 
-msgid "Purchases"
-msgstr "Покупки"
+msgid "Top-up amount, KZT"
+msgstr "Сумма пополнения, ₸"
+
+msgid "Withdrawal amount, KZT"
+msgstr "Сумма вывода, ₸"
+
+msgid "Withdraw"
+msgstr "Вывести"
+
+msgid ""
+"This is a study prototype, so no real money moves. One operation: from 100 "
+"to 500,000 ₸."
+msgstr ""
+"Это учебный прототип, настоящие деньги не списываются. За одну операцию "
+"можно от 100 до 500 000 ₸."
+
+msgid "Balance history"
+msgstr "История баланса"
 
 msgid "Item"
 msgstr "Товар"
@@ -138,11 +239,11 @@ msgstr "Товар"
 msgid "Price"
 msgstr "Цена"
 
-msgid "Sold in person?"
-msgstr "Продали при встрече?"
+msgid "Sold in person"
+msgstr "Продано при встрече"
 
-msgid "Buyer username"
-msgstr "Логин покупателя"
+msgid "Buyer phone"
+msgstr "Телефон покупателя"
 
 msgid "Mark as sold"
 msgstr "Отметить проданным"
@@ -159,9 +260,6 @@ msgstr "Дата"
 msgid "Nothing sold yet."
 msgstr "Пока ничего не продано."
 
-msgid "Seller"
-msgstr "Продавец"
-
 msgid "Reviewed"
 msgstr "Отзыв оставлен"
 
@@ -171,17 +269,20 @@ msgstr "Оставить отзыв"
 msgid "No purchases yet."
 msgstr "Покупок пока нет."
 
-msgid "Create account"
-msgstr "Создать аккаунт"
+msgid "Go to catalog"
+msgstr "Перейти в каталог"
 
-msgid "Already registered?"
-msgstr "Уже зарегистрированы?"
+msgid "Create Student Account"
+msgstr "Регистрация студента"
 
-msgid "On the site since"
-msgstr "На сайте с"
+msgid "No password needed: you log in with a code sent to your phone."
+msgstr "Пароль не нужен: входить будете по коду, который придёт на телефон."
 
-msgid "No reviews yet."
-msgstr "Отзывов пока нет."
+msgid "Already have an account?"
+msgstr "Уже есть аккаунт?"
+
+msgid "Seller rating"
+msgstr "Рейтинг продавца"
 
 msgid "Your review"
 msgstr "Ваш отзыв"
@@ -192,8 +293,24 @@ msgstr "Отправить"
 msgid "Listings"
 msgstr "Объявления"
 
-msgid "Some filter values were invalid and were ignored."
-msgstr "Некоторые значения фильтра неверны и были проигнорированы."
+msgid "Confirmation code"
+msgstr "Код подтверждения"
+
+msgid "Demo mode: SMS is not sent. Your code:"
+msgstr "Демо-режим, SMS не отправляется. Ваш код:"
+
+msgid "Create account"
+msgstr "Создать аккаунт"
+
+msgid "Send the code again"
+msgstr "Отправить код ещё раз"
+
+msgid "Change phone number"
+msgstr "Изменить номер"
+
+#, python-format
+msgid "Enter the code for <strong>%(phone)s</strong>."
+msgstr "Введите код для номера <strong>%(phone)s</strong>."
 
 #, python-format
 msgid "Your listing \"%(title)s\" is now live."
@@ -214,12 +331,53 @@ msgstr "Пользователь «%(name)s» не найден."
 msgid "\"%(title)s\" is marked as sold to %(name)s."
 msgstr "«%(title)s» отмечен как проданный пользователю %(name)s."
 
-msgid "Thank you! Your review has been published."
-msgstr "Спасибо! Ваш отзыв опубликован."
+msgid "The amount must be between 100 and 500,000 KZT."
+msgstr "Сумма должна быть от 100 до 500 000 ₸."
 
 #, python-format
-msgid "Welcome to Student Marketplace, %(name)s!"
-msgstr "Добро пожаловать в Student Marketplace, %(name)s!"
+msgid "Balance topped up by %(amount)s ₸."
+msgstr "Баланс пополнен на %(amount)s ₸."
+
+#, python-format
+msgid "%(amount)s ₸ withdrawn from your balance."
+msgstr "С баланса выведено %(amount)s ₸."
+
+msgid "Your review is published."
+msgstr "Отзыв опубликован."
+
+msgid "A new code has been sent."
+msgstr "Новый код отправлен."
+
+msgid "Wait 30 seconds before requesting a new code."
+msgstr "Подождите 30 секунд, прежде чем запросить новый код."
+
+msgid "This phone number is already registered."
+msgstr "Этот номер уже зарегистрирован."
+
+#, python-format
+msgid "Welcome, %(name)s! You have 10,000 ₸ on your balance."
+msgstr "Добро пожаловать, %(name)s! На балансе 10 000 ₸."
+
+msgid "No account with this phone number. Register first."
+msgstr "Аккаунта с таким номером нет. Сначала зарегистрируйтесь."
+
+msgid "Phone number"
+msgstr "Номер телефона"
+
+msgid "Enter a phone number like +7 701 123 45 67."
+msgstr "Введите номер в формате +7 701 123 45 67."
+
+msgid "Your name"
+msgstr "Ваше имя"
+
+msgid "User with this Student ID already exists."
+msgstr "Пользователь с таким Student ID уже существует."
+
+msgid "Code"
+msgstr "Код"
+
+msgid "Amount, KZT"
+msgstr "Сумма, ₸"
 
 msgid "Title"
 msgstr "Название"
@@ -227,33 +385,43 @@ msgstr "Название"
 msgid "Price (KZT)"
 msgstr "Цена (₸)"
 
+msgid "Weight, kg"
+msgstr "Вес, кг"
+
+msgid "Length, cm"
+msgstr "Длина, см"
+
+msgid "Width, cm"
+msgstr "Ширина, см"
+
+msgid "Height, cm"
+msgstr "Высота, см"
+
 msgid "Image link (optional)"
 msgstr "Ссылка на картинку (необязательно)"
 
+msgid "Condition, defects, what comes with it."
+msgstr "Состояние, дефекты, что в комплекте."
+
 msgid "Leave empty to use the category picture."
-msgstr "Оставьте пустым — будет картинка категории."
+msgstr "Если оставить пустым, будет картинка категории."
+
+msgid "Describe the item in more detail, at least 10 characters."
+msgstr "Опишите товар подробнее, хотя бы 10 символов."
+
+msgid "Must be greater than 0."
+msgstr "Должно быть больше 0."
 
 msgid "Item price must be greater than 0 KZT."
 msgstr "Цена должна быть больше 0 ₸."
 
-msgid "Item price exceeds the maximum limit (100,000 KZT)."
-msgstr "Цена превышает максимум (100 000 ₸)."
+msgid "The price can't be higher than 100,000 KZT."
+msgstr "Цена не может быть больше 100 000 ₸."
 
 msgid ""
-"Limit exceeded: a student cannot have more than 10 active listings at the "
-"same time."
+"You already have 10 active listings. Sell one before posting a new one."
 msgstr ""
-"Превышен лимит: у студента не может быть больше 10 активных объявлений "
-"одновременно."
-
-msgid "Newest first"
-msgstr "Сначала новые"
-
-msgid "Price: low to high"
-msgstr "Сначала дешёвые"
-
-msgid "Price: high to low"
-msgstr "Сначала дорогие"
+"У вас уже 10 активных объявлений. Продайте одно, чтобы добавить новое."
 
 msgid "Purchase"
 msgstr "Покупка"
@@ -267,9 +435,6 @@ msgstr "Комментарий"
 msgid "You cannot buy your own listing."
 msgstr "Нельзя купить собственный товар."
 
-msgid "This item has already been sold."
-msgstr "Этот товар уже продан."
-
 msgid "This item is not available for purchase."
 msgstr "Этот товар недоступен для покупки."
 
@@ -280,12 +445,43 @@ msgid "You cannot review yourself."
 msgstr "Нельзя оставить отзыв самому себе."
 
 msgid ""
-"You can only review a seller after buying from them, once per purchase."
+"You can review a seller only after buying from them, once per purchase."
 msgstr ""
-"Отзыв можно оставить только после покупки у продавца — один раз на покупку."
+"Отзыв можно оставить только после покупки у продавца, один раз на каждую "
+"покупку."
 
 msgid "You have already reviewed this purchase."
 msgstr "Вы уже оставили отзыв на эту покупку."
+
+msgid "New"
+msgstr "Новое"
+
+msgid "Like new"
+msgstr "Как новое"
+
+msgid "Good"
+msgstr "Хорошее"
+
+msgid "Fair"
+msgstr "Среднее"
+
+msgid "Top-up"
+msgstr "Пополнение"
+
+msgid "Withdrawal"
+msgstr "Вывод"
+
+msgid "Sale"
+msgstr "Продажа"
+
+msgid "Request a new code."
+msgstr "Запросите новый код."
+
+msgid "The code has expired. Request a new one."
+msgstr "Срок действия кода истёк. Запросите новый."
+
+msgid "Wrong code."
+msgstr "Неверный код."
 
 msgid "English"
 msgstr "Английский"

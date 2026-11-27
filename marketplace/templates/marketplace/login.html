@@ -4,46 +4,15 @@
 {% block title %}{% trans "Login" %} — Student Marketplace{% endblock %}
 
 {% block content %}
-<div class="panel panel-narrow">
-    <h1>{% trans "Login" %}</h1>
+<div class="form-card">
+    <h2>{% trans "Sign In" %}</h2>
+    <p class="form-lead">{% trans "Enter your phone number and we will send you a code." %}</p>
+
     <form method="POST" novalidate>
         {% csrf_token %}
         <input type="hidden" name="next" value="{{ next }}">
         {% include 'marketplace/_form_fields.html' %}
-        <div class="form-actions">
-            <button type="submit" class="btn btn-primary btn-lg">{% trans "Log in" %}</button>
-        </div>
-    </form>
-    <p class="small mt-2 mb-0">{% trans "No account?" %} <a href="{% url 'register' %}">{% trans "Register" %}</a></p>
-<div class="form-card">
-    <h2>{% trans "Sign In" %}</h2>
-
-    <form method="POST" novalidate>
-        {% csrf_token %}
-
-        <!-- Вывод ошибки, если логин или пароль неверные -->
-        {% if form.non_field_errors %}
-            <div class="alert alert-error">
-                <div>
-                    {% for error in form.non_field_errors %}
-                        <div>{{ error }}</div>
-                    {% endfor %}
-                </div>
-            </div>
-        {% endif %}
-
-        <!-- Поля Username и Password -->
-        {% for field in form %}
-            <div class="field">
-                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
-                {{ field }}
-                {% for error in field.errors %}
-                    <div class="field-error">{{ error }}</div>
-                {% endfor %}
-            </div>
-        {% endfor %}
-
-        <button type="submit" class="btn btn-primary btn-lg btn-block">{% trans "Login" %}</button>
+        <button type="submit" class="btn btn-primary btn-lg btn-block">{% trans "Get code" %}</button>
     </form>
 
     <hr class="form-divider">

@@ -1,47 +1,28 @@
 {% load i18n market_extras %}
-{% if user.is_authenticated %}
-<article class="item-card">
-    <div class="item-media">
-        <img src="{% item_image item %}" alt="{{ item.title }}" loading="lazy">
-        <span class="item-cat">{% trans item.category.name %}</span>
-    </div>
-    <div class="item-body">
-        <h3 class="item-title">{{ item.title }}</h3>
-        <div class="item-price">{{ item.price|floatformat:"0g" }} ₸</div>
-        <div class="item-meta">
-            <a href="{% url 'seller_reviews' item.seller.username %}">{{ item.seller.username }}</a>, {{ item.created_at|date:"d.m.Y" }}
+{# Карточка товара. Вошедший видит карточку и ссылку на страницу товара, #}
+{# гость — размытую карточку, при наведении появляется «Войдите, чтобы купить». #}
+<article class="card{% if not user.is_authenticated %} is-locked{% endif %}">
+    <a class="card-link" href="{% if user.is_authenticated %}{% url 'item_detail' item.id %}{% else %}{% url 'login' %}?next={% url 'item_detail' item.id %}{% endif %}">
+        <div class="card-blur">
+            <!-- Картинка товара или картинка категории (локальный файл из static/) -->
+            <div class="card-media">
+                <img src="{% item_image item %}" alt="{{ item.title }}" loading="lazy">
+                <span class="badge badge-category">{% trans item.category.name %}</span>
+                {% if user.is_authenticated and user == item.seller %}
+                    <span class="badge badge-status">{% trans "Your listing" %}</span>
+                {% endif %}
+            </div>
+
+            <div class="card-body">
+                <h3 class="card-title">{{ item.title }}</h3>
+                <p class="card-price">{{ item.price|floatformat:"0g" }} <small>KZT</small></p>
+
+                <div class="card-meta">
+                    <div>{% trans "Seller" %}: <strong>{{ item.seller.display_name }}</strong></div>
+                    <div>{{ item.created_at|date:"d M Y" }}</div>
+                </div>
+            </div>
         </div>
-        <div class="item-actions">
-            {% if user == item.seller %}
-                <span class="own-label">{% trans "Your listing" %}</span>
-            {% elif user.balance < item.price %}
-                <button type="button" class="btn btn-block" disabled>{% trans "Not enough money" %}</button>
-            {% else %}
-                {% trans "Buy this item?" as confirm_text %}
-                <form method="post" action="{% url 'buy_item' item.id %}"
-                      onsubmit="return confirm('{{ confirm_text|escapejs }} {{ item.title|escapejs }}, {{ item.price|floatformat:0 }} ₸');">
-                    {% csrf_token %}
-                    <input type="hidden" name="next" value="{{ request.get_full_path }}">
-                    <button type="submit" class="btn btn-primary btn-block">{% trans "Buy Now" %}</button>
-                </form>
-            {% endif %}
-        </div>
-    </div>
+        {% if not user.is_authenticated %}<span class="locked-hint">{% trans "Log in to buy" %}</span>{% endif %}
+    </a>
 </article>
-{% else %}
-{# Гость: карточка размыта, при наведении появляется подсказка войти #}
-<a class="item-card is-locked" href="{% url 'login' %}?next={{ request.get_full_path|urlencode }}">
-    <div class="locked-content" aria-hidden="true">
-        <div class="item-media">
-            <img src="{% item_image item %}" alt="" loading="lazy">
-            <span class="item-cat">{% trans item.category.name %}</span>
-        </div>
-        <div class="item-body">
-            <h3 class="item-title">{{ item.title }}</h3>
-            <div class="item-price">{{ item.price|floatformat:"0g" }} ₸</div>
-            <div class="item-meta">{{ item.seller.username }}, {{ item.created_at|date:"d.m.Y" }}</div>
-        </div>
-    </div>
-    <span class="locked-hint">{% trans "Log in to buy" %}</span>
-</a>
-{% endif %}

@@ -1,17 +1,6 @@
 {% extends 'marketplace/base.html' %}
 {% load i18n %}
 
-{% block title %}{% trans "New listing" %} — Student Marketplace{% endblock %}
-
-{% block content %}
-<div class="panel panel-medium">
-    <h1>{% trans "New listing" %}</h1>
-    <form method="POST" novalidate>
-        {% csrf_token %}
-        {% include 'marketplace/_form_fields.html' %}
-        <div class="form-actions">
-            <button type="submit" class="btn btn-primary btn-lg">{% trans "Publish" %}</button>
-        </div>
 {% block title %}{% trans "Post a New Item" %} — Student Marketplace{% endblock %}
 
 {% block content %}
@@ -21,7 +10,7 @@
     <form method="POST" novalidate>
         {% csrf_token %}
 
-        <!-- Общие ошибки формы (например, превышен лимит в 10 активных объявлений) -->
+        <!-- Общие ошибки формы (например, уже 10 активных объявлений) -->
         {% if form.non_field_errors %}
             <div class="alert alert-error">
                 <div>
@@ -32,22 +21,27 @@
             </div>
         {% endif %}
 
-        <!-- Поля формы (Название, Цена, Категория) -->
-        {% for field in form %}
-            <div class="field">
-                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
-                {{ field }}
+        <!-- Основное: название, цена, категория -->
+        {% include 'marketplace/_field.html' with field=form.title %}
+        <div class="field-row">
+            {% include 'marketplace/_field.html' with field=form.price %}
+            {% include 'marketplace/_field.html' with field=form.category %}
+        </div>
 
-                {% if field.help_text %}
-                    <div class="field-help">{{ field.help_text }}</div>
-                {% endif %}
+        <!-- Описание и характеристики — обязательные -->
+        <h3 class="form-section">{% trans "Description and specifications" %}</h3>
+        {% include 'marketplace/_field.html' with field=form.description %}
+        <div class="field-row">
+            {% include 'marketplace/_field.html' with field=form.condition %}
+            {% include 'marketplace/_field.html' with field=form.weight_kg %}
+        </div>
+        <div class="field-row field-row-3">
+            {% include 'marketplace/_field.html' with field=form.length_cm %}
+            {% include 'marketplace/_field.html' with field=form.width_cm %}
+            {% include 'marketplace/_field.html' with field=form.height_cm %}
+        </div>
 
-                <!-- Ошибки конкретного поля (например, цена <= 0 или > 100,000) -->
-                {% for error in field.errors %}
-                    <div class="field-error">{{ error }}</div>
-                {% endfor %}
-            </div>
-        {% endfor %}
+        {% include 'marketplace/_field.html' with field=form.image_url %}
 
         <button type="submit" class="btn btn-primary btn-lg btn-block">{% trans "Submit Listing" %}</button>
         <a href="{% url 'item_list' %}" class="btn btn-outline btn-block">{% trans "Cancel" %}</a>

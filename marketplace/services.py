@@ -1,12 +1,18 @@
-"""Бизнес-логика покупки товара.
+"""Бизнес-логика: покупка товара, баланс (пополнение и вывод), отзывы.
 
 Вынесена из views, чтобы одна и та же проверенная логика использовалась
-и при покупке покупателем (buy_item), и при отметке продавцом (mark_as_sold).
+в разных местах: покупка покупателем (buy_item) и отметка продавцом (mark_as_sold).
 """
+from decimal import Decimal
+
 from django.db import IntegrityError, transaction
 from django.db.models import F
 
-from .models import ItemListing, Transaction, User
+from .models import ItemListing, Transaction, User, WalletOperation
+
+# Ограничения на одну операцию пополнения или вывода, ₸.
+WALLET_MIN = Decimal('100')
+WALLET_MAX = Decimal('500000')
 
 
 class PurchaseError(Exception):
@@ -46,6 +52,14 @@ def purchase_listing(listing_id, buyer, charge=True):
                     raise PurchaseError('Not enough money on your balance.')
                 User.objects.filter(pk=buyer.pk).update(balance=F('balance') - listing.price)
                 User.objects.filter(pk=listing.seller_id).update(balance=F('balance') + listing.price)
+                # Записываем обе операции в историю баланса.
+                WalletOperation.objects.bulk_create([
+                    WalletOperation(user_id=buyer.pk, kind='purchase', amount=listing.price,
+                                    balance_after=users[buyer.pk].balance - listing.price, listing=listing),
+                    WalletOperation(user_id=listing.seller_id, kind='sale', amount=listing.price,
+                                    balance_after=users[listing.seller_id].balance + listing.price,
+                                    listing=listing),
+                ])
 
             listing.status = 'Sold'
             listing.save(update_fields=['status'])
@@ -53,6 +67,46 @@ def purchase_listing(listing_id, buyer, charge=True):
     except IntegrityError as exc:
         # Последняя линия защиты: уникальный индекс на transaction.listing_id.
         raise PurchaseError('This item has already been sold.') from exc
+
+
+# ---------------------------------------------------------------------------
+# Баланс: пополнение и вывод
+# ---------------------------------------------------------------------------
+
+class WalletError(Exception):
+    """Операцию с балансом нельзя выполнить (неверная сумма, не хватает денег)."""
+
+
+def _check_amount(amount):
+    amount = Decimal(amount)
+    if amount < WALLET_MIN or amount > WALLET_MAX:
+        raise WalletError('The amount must be between 100 and 500,000 KZT.')
+    return amount
+
+
+def deposit(user, amount):
+    """Пополнение баланса (прототип: деньги ниоткуда не списываются)."""
+    amount = _check_amount(amount)
+    with transaction.atomic():
+        locked = User.objects.select_for_update().get(pk=user.pk)
+        locked.balance += amount
+        locked.save(update_fields=['balance'])
+        return WalletOperation.objects.create(user=locked, kind='deposit', amount=amount,
+                                              balance_after=locked.balance)
+
+
+def withdraw(user, amount):
+    """Вывод с баланса. Нельзя вывести больше, чем есть."""
+    amount = _check_amount(amount)
+    with transaction.atomic():
+        # Строка пользователя блокируется: два одновременных вывода не уведут баланс в минус.
+        locked = User.objects.select_for_update().get(pk=user.pk)
+        if locked.balance < amount:
+            raise WalletError('Not enough money on your balance.')
+        locked.balance -= amount
+        locked.save(update_fields=['balance'])
+        return WalletOperation.objects.create(user=locked, kind='withdraw', amount=amount,
+                                              balance_after=locked.balance)
 
 
 # ---------------------------------------------------------------------------
@@ -90,7 +144,7 @@ def leave_review(reviewer, seller, listing_id, rating, comment):
         raise ReviewError('You cannot review yourself.')
     tx = reviewable_purchases(reviewer, seller).filter(listing_id=listing_id).first()
     if tx is None:
-        raise ReviewError('You can only review a seller after buying from them, once per purchase.')
+        raise ReviewError('You can review a seller only after buying from them, once per purchase.')
     try:
         with transaction.atomic():
             return Review.objects.create(

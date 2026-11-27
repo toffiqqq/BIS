@@ -1,0 +1,103 @@
+{% extends 'marketplace/base.html' %}
+{% load i18n market_extras %}
+
+{% block title %}{{ item.title }} — Student Marketplace{% endblock %}
+
+{% block content %}
+    <nav class="breadcrumbs">
+        <a href="{% url 'item_list' %}">{% trans "Home" %}</a>
+        <span>/</span>
+        <a href="{% url 'item_list' %}?category={{ item.category.pk }}#catalog">{% trans item.category.name %}</a>
+        <span>/</span>
+        <span>{{ item.title }}</span>
+    </nav>
+
+    <div class="product">
+        <!-- Картинка -->
+        <div class="product-media">
+            <img src="{% item_image item %}" alt="{{ item.title }}">
+            <span class="badge badge-category">{% trans item.category.name %}</span>
+        </div>
+
+        <!-- Название, цена, покупка -->
+        <div class="product-buy">
+            <h1 class="product-title">{{ item.title }}</h1>
+            <p class="card-price product-price">{{ item.price|floatformat:"0g" }} <small>KZT</small></p>
+
+            <div class="product-tags">
+                <span class="badge badge-soft">{{ item.get_condition_display }}</span>
+                {% if item.status == 'Sold' %}<span class="badge badge-sold">{% trans "Sold" %}</span>{% endif %}
+            </div>
+
+            <div class="buy-box">
+                {% if item.status != 'Active' %}
+                    <p class="buy-note">{% trans "This item has already been sold." %}</p>
+                {% elif not user.is_authenticated %}
+                    <a href="{% url 'login' %}?next={{ request.path|urlencode }}" class="btn btn-primary btn-lg btn-block">{% trans "Log in to buy" %}</a>
+                {% elif user == item.seller %}
+                    <p class="buy-note">{% trans "This is your listing. When you sell it in person, mark it as sold in your profile." %}</p>
+                    <a href="{% url 'profile' %}" class="btn btn-outline btn-block">{% trans "Go to profile" %}</a>
+                {% elif user.balance < item.price %}
+                    <button type="button" class="btn btn-primary btn-lg btn-block" disabled>{% trans "Not enough money" %}</button>
+                    <p class="buy-note">{% blocktrans with balance=user.balance|floatformat:"0g" %}Your balance: {{ balance }} ₸.{% endblocktrans %}
+                        <a href="{% url 'profile' %}#wallet">{% trans "Top up" %}</a></p>
+                {% else %}
+                    {% trans "Buy this item?" as confirm_text %}
+                    <form method="post" action="{% url 'buy_item' item.id %}"
+                          onsubmit="return confirm('{{ confirm_text|escapejs }} {{ item.title|escapejs }}, {{ item.price|floatformat:0 }} ₸');">
+                        {% csrf_token %}
+                        <input type="hidden" name="next" value="{% url 'profile' %}#purchases">
+                        <button type="submit" class="btn btn-primary btn-lg btn-block">{% trans "Buy Now" %}</button>
+                    </form>
+                    <p class="buy-note">{% blocktrans with balance=user.balance|floatformat:"0g" %}Your balance: {{ balance }} ₸.{% endblocktrans %}</p>
+                {% endif %}
+            </div>
+
+            <!-- Продавец -->
+            <a class="seller-box" href="{% url 'seller_reviews' item.seller.username %}">
+                <span class="avatar">{{ item.seller.display_name|first|upper }}</span>
+                <span>
+                    <span class="seller-label">{% trans "Seller" %}</span>
+                    <strong>{{ item.seller.display_name }}</strong>
+                    <span class="seller-rating">
+                        {% if seller_rating.n %}<span class="stars">★</span> {{ seller_rating.avg|floatformat:1 }} · {% blocktrans count counter=seller_rating.n %}{{ counter }} review{% plural %}{{ counter }} reviews{% endblocktrans %}
+                        {% else %}{% trans "No reviews yet." %}{% endif %}
+                    </span>
+                </span>
+            </a>
+        </div>
+    </div>
+
+    <div class="product-info">
+        <!-- Описание -->
+        <section class="panel">
+            <h2 class="panel-title">{% trans "Description" %}</h2>
+            {% if item.description %}
+                <p class="product-description">{{ item.description|linebreaksbr }}</p>
+            {% else %}
+                <p class="muted">{% trans "The seller has not added a description." %}</p>
+            {% endif %}
+        </section>
+
+        <!-- Общие характеристики -->
+        <section class="panel">
+            <h2 class="panel-title">{% trans "Specifications" %}</h2>
+            <dl class="specs">
+                <dt>{% trans "Category" %}</dt><dd>{% trans item.category.name %}</dd>
+                <dt>{% trans "Condition" %}</dt><dd>{{ item.get_condition_display }}</dd>
+                <dt>{% trans "Weight" %}</dt><dd>{% if item.weight_kg %}{{ item.weight_kg.normalize }} {% trans "kg" %}{% else %}—{% endif %}</dd>
+                <dt>{% trans "Size (L × W × H)" %}</dt><dd>{% if item.dimensions %}{{ item.dimensions }} {% trans "cm" %}{% else %}—{% endif %}</dd>
+                <dt>{% trans "Published" %}</dt><dd>{{ item.created_at|date:"d M Y" }}</dd>
+            </dl>
+        </section>
+    </div>
+
+    {% if more_items %}
+        <div class="catalog-head section-gap">
+            <h2>{% trans "More from this seller" %}</h2>
+        </div>
+        <div class="card-grid">
+            {% for item in more_items %}{% include 'marketplace/_item_card.html' %}{% endfor %}
+        </div>
+    {% endif %}
+{% endblock %}

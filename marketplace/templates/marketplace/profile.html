@@ -4,115 +4,158 @@
 {% block title %}{% trans "Profile" %} — Student Marketplace{% endblock %}
 
 {% block content %}
-<section class="panel">
-    <div class="profile-head">
-        <div class="avatar">{{ profile_user.username|first|upper }}</div>
-        <div class="profile-info">
-            <h1>{{ profile_user.get_full_name|default:profile_user.username }}</h1>
-            <div class="kv">
-                <span>{{ profile_user.username }}</span>
-                <span>{% trans "Student ID" %}: {{ profile_user.student_id|default:"—" }}</span>
-                {% if profile_user.email %}<span>{{ profile_user.email }}</span>{% endif %}
-                <a href="{% url 'seller_reviews' profile_user.username %}">{% trans "Reviews" %}{% if rating.n %}: {{ rating.avg|floatformat:1 }} ★ ({{ rating.n }}){% endif %}</a>
-            </div>
+<!-- Шапка профиля -->
+<section class="panel profile-head">
+    <span class="avatar avatar-lg">{{ profile_user.display_name|first|upper }}</span>
+    <div class="profile-info">
+        <h1>{{ profile_user.get_full_name|default:profile_user.display_name }}</h1>
+        <div class="kv">
+            <span>{{ phone_display|default:"—" }}</span>
+            {% if profile_user.student_id %}<span>{% trans "Student ID" %}: {{ profile_user.student_id }}</span>{% endif %}
+            <span>{% trans "On the site since" %} {{ profile_user.date_joined|date:"d.m.Y" }}</span>
+            <a href="{% url 'seller_reviews' profile_user.username %}">{% trans "Reviews" %}{% if rating.n %}: ★ {{ rating.avg|floatformat:1 }} ({{ rating.n }}){% endif %}</a>
         </div>
     </div>
+</section>
 
-    <div class="stat-cards">
-        <div class="stat-card stat-main"><b>{{ profile_user.balance|floatformat:"0g" }} ₸</b><span>{% trans "Balance" %}</span></div>
-        <div class="stat-card"><b>{{ active_listings|length }} / 10</b><span>{% trans "Active listings" %}</span></div>
-        <div class="stat-card"><b>{{ sold_listings|length }}</b><span>{% trans "Sold" %}</span></div>
-        <div class="stat-card"><b>{{ purchases|length }}</b><span>{% trans "Purchases" %}</span></div>
+<div class="stat-cards">
+    <div class="stat-card"><b>{{ active_listings|length }} / 10</b><span>{% trans "Selling now" %}</span></div>
+    <div class="stat-card"><b>{{ sold_listings|length }}</b><span>{% trans "Sold" %}</span></div>
+    <div class="stat-card"><b>{{ purchases|length }}</b><span>{% trans "Bought" %}</span></div>
+</div>
+
+<!-- Баланс: пополнение, вывод, история -->
+<section class="panel wallet" id="wallet">
+    <div class="wallet-balance">
+        <span>{% trans "Balance" %}</span>
+        <b>{{ profile_user.balance|floatformat:"0g" }} ₸</b>
+    </div>
+    <div class="wallet-forms">
+        <form method="post" action="{% url 'wallet' 'deposit' %}" class="wallet-form">
+            {% csrf_token %}
+            <div class="field">
+                <label for="id_deposit-amount">{% trans "Top-up amount, KZT" %}</label>
+                <input type="number" name="deposit-amount" id="id_deposit-amount" min="100" max="500000" step="100" placeholder="5000" required>
+            </div>
+            <button type="submit" class="btn btn-primary">{% trans "Top up" %}</button>
+        </form>
+        <form method="post" action="{% url 'wallet' 'withdraw' %}" class="wallet-form">
+            {% csrf_token %}
+            <div class="field">
+                <label for="id_withdraw-amount">{% trans "Withdrawal amount, KZT" %}</label>
+                <input type="number" name="withdraw-amount" id="id_withdraw-amount" min="100" max="500000" step="100" placeholder="5000" required>
+            </div>
+            <button type="submit" class="btn btn-outline">{% trans "Withdraw" %}</button>
+        </form>
+    </div>
+    <p class="field-help">{% trans "This is a study prototype, so no real money moves. One operation: from 100 to 500,000 ₸." %}</p>
+
+    {% if operations %}
+        <h3 class="panel-subtitle">{% trans "Balance history" %}</h3>
+        <div class="table-wrap">
+            <table class="table">
+                <tbody>
+                {% for op in operations %}
+                    <tr>
+                        <td>{{ op.get_kind_display }}{% if op.listing %} <span class="muted">· {{ op.listing.title }}</span>{% endif %}</td>
+                        <td class="nowrap {% if op.is_income %}amount-plus{% else %}amount-minus{% endif %}">{% if op.is_income %}+{% else %}−{% endif %}{{ op.amount|floatformat:"0g" }} ₸</td>
+                        <td class="nowrap muted">{{ op.created_at|date:"d.m.Y H:i" }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% endif %}
+</section>
+
+<!-- Товары: продаю, продано, куплено -->
+<section class="panel" data-tabs>
+    <div class="tabs" role="tablist">
+        <button class="tab" type="button" data-tab="selling">{% trans "Selling now" %} <span class="tab-count">{{ active_listings|length }}</span></button>
+        <button class="tab" type="button" data-tab="sold">{% trans "Sold" %} <span class="tab-count">{{ sold_listings|length }}</span></button>
+        <button class="tab" type="button" data-tab="purchases">{% trans "Bought" %} <span class="tab-count">{{ purchases|length }}</span></button>
     </div>
 
-    <div data-tabs>
-        <div class="tabs" role="tablist">
-            <button class="tab" data-tab="active">{% trans "Active listings" %}</button>
-            <button class="tab" data-tab="sold">{% trans "Sold" %}</button>
-            <button class="tab" data-tab="purchases">{% trans "Purchases" %}</button>
+    <!-- Продаю сейчас: user.listings (FK ItemListing.seller) -->
+    <div data-panel="selling">
+        {% if active_listings %}
+        <div class="table-wrap">
+            <table class="table">
+                <thead><tr><th>{% trans "Item" %}</th><th>{% trans "Price" %}</th><th>{% trans "Sold in person" %}</th></tr></thead>
+                <tbody>
+                {% for item in active_listings %}
+                    <tr>
+                        <td><a class="cell-item" href="{% url 'item_detail' item.id %}"><img class="thumb" src="{% item_image item %}" alt="">{{ item.title }}</a></td>
+                        <td class="nowrap">{{ item.price|floatformat:"0g" }} ₸</td>
+                        <td>
+                            <form method="post" action="{% url 'mark_as_sold' item.id %}" class="sold-form">
+                                {% csrf_token %}
+                                <input type="hidden" name="next" value="{% url 'profile' %}#sold">
+                                <input class="input-sm" name="buyer" placeholder="{% trans 'Buyer phone' %}" inputmode="tel" required>
+                                <button class="btn btn-success-outline btn-sm" type="submit">✓ {% trans "Mark as sold" %}</button>
+                            </form>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
         </div>
+        {% else %}
+            <p class="muted">{% trans "No active listings." %} <a href="{% url 'add_item' %}">+ {% trans "Add Item" %}</a></p>
+        {% endif %}
+    </div>
 
-        <!-- Активные объявления: user.listings (FK ItemListing.seller) -->
-        <div data-panel="active">
-            {% if active_listings %}
-            <div class="table-wrap">
-                <table class="table">
-                    <thead><tr><th>{% trans "Item" %}</th><th>{% trans "Price" %}</th><th>{% trans "Sold in person?" %}</th></tr></thead>
-                    <tbody>
-                    {% for item in active_listings %}
-                        <tr>
-                            <td><div class="cell-item"><img class="thumb" src="{% item_image item %}" alt="">{{ item.title }}</div></td>
-                            <td class="nowrap">{{ item.price|floatformat:"0g" }} ₸</td>
-                            <td>
-                                <form method="post" action="{% url 'mark_as_sold' item.id %}" class="sold-form">
-                                    {% csrf_token %}
-                                    <input type="hidden" name="next" value="{% url 'profile' %}">
-                                    <input class="input input-sm" name="buyer" placeholder="{% trans 'Buyer username' %}" required>
-                                    <button class="btn btn-sm btn-outline" type="submit">{% trans "Mark as sold" %}</button>
-                                </form>
-                            </td>
-                        </tr>
-                    {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-            {% else %}
-                <p class="muted">{% trans "No active listings." %}</p>
-            {% endif %}
+    <!-- Проданные: ItemListing (status=Sold) + Transaction (1:1) -> покупатель -->
+    <div data-panel="sold" class="hidden">
+        {% if sold_listings %}
+        <div class="table-wrap">
+            <table class="table">
+                <thead><tr><th>{% trans "Item" %}</th><th>{% trans "Price" %}</th><th>{% trans "Buyer" %}</th><th>{% trans "Date" %}</th></tr></thead>
+                <tbody>
+                {% for item in sold_listings %}
+                    <tr>
+                        <td><a class="cell-item" href="{% url 'item_detail' item.id %}"><img class="thumb" src="{% item_image item %}" alt="">{{ item.title }}</a></td>
+                        <td class="nowrap">{{ item.price|floatformat:"0g" }} ₸</td>
+                        <td>{{ item.transaction.buyer.display_name|default:"—" }}</td>
+                        <td class="nowrap muted">{{ item.transaction.completed_at|date:"d.m.Y H:i"|default:"—" }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
         </div>
+        {% else %}
+            <p class="muted">{% trans "Nothing sold yet." %}</p>
+        {% endif %}
+    </div>
 
-        <!-- Проданные: ItemListing (status=Sold) + Transaction (1:1) -> покупатель -->
-        <div data-panel="sold" class="hidden">
-            {% if sold_listings %}
-            <div class="table-wrap">
-                <table class="table">
-                    <thead><tr><th>{% trans "Item" %}</th><th>{% trans "Price" %}</th><th>{% trans "Buyer" %}</th><th>{% trans "Date" %}</th></tr></thead>
-                    <tbody>
-                    {% for item in sold_listings %}
-                        <tr>
-                            <td><div class="cell-item"><img class="thumb" src="{% item_image item %}" alt="">{{ item.title }}</div></td>
-                            <td class="nowrap">{{ item.price|floatformat:"0g" }} ₸</td>
-                            <td>{{ item.transaction.buyer.username|default:"—" }}</td>
-                            <td class="muted">{{ item.transaction.completed_at|date:"d.m.Y H:i"|default:"—" }}</td>
-                        </tr>
-                    {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-            {% else %}
-                <p class="muted">{% trans "Nothing sold yet." %}</p>
-            {% endif %}
+    <!-- Куплено: user.purchases (FK Transaction.buyer) -->
+    <div data-panel="purchases" class="hidden">
+        {% if purchases %}
+        <div class="table-wrap">
+            <table class="table">
+                <thead><tr><th>{% trans "Item" %}</th><th>{% trans "Price" %}</th><th>{% trans "Seller" %}</th><th>{% trans "Date" %}</th><th></th></tr></thead>
+                <tbody>
+                {% for tx in purchases %}
+                    <tr>
+                        <td><a class="cell-item" href="{% url 'item_detail' tx.listing_id %}"><img class="thumb" src="{% item_image tx.listing %}" alt="">{{ tx.listing.title }}</a></td>
+                        <td class="nowrap">{{ tx.listing.price|floatformat:"0g" }} ₸</td>
+                        <td><a href="{% url 'seller_reviews' tx.listing.seller.username %}">{{ tx.listing.seller.display_name }}</a></td>
+                        <td class="nowrap muted">{{ tx.completed_at|date:"d.m.Y H:i" }}</td>
+                        <td class="right">
+                            {% if tx.listing_id in reviewed_ids %}
+                                <span class="muted small">✓ {% trans "Reviewed" %}</span>
+                            {% else %}
+                                <a class="btn btn-outline btn-sm" href="{% url 'seller_reviews' tx.listing.seller.username %}?listing={{ tx.listing_id }}#review-form">{% trans "Leave a review" %}</a>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
         </div>
-
-        <!-- История покупок: user.purchases (FK Transaction.buyer) -->
-        <div data-panel="purchases" class="hidden">
-            {% if purchases %}
-            <div class="table-wrap">
-                <table class="table">
-                    <thead><tr><th>{% trans "Item" %}</th><th>{% trans "Price" %}</th><th>{% trans "Seller" %}</th><th>{% trans "Date" %}</th><th></th></tr></thead>
-                    <tbody>
-                    {% for tx in purchases %}
-                        <tr>
-                            <td><div class="cell-item"><img class="thumb" src="{% item_image tx.listing %}" alt="">{{ tx.listing.title }}</div></td>
-                            <td class="nowrap">{{ tx.listing.price|floatformat:"0g" }} ₸</td>
-                            <td><a href="{% url 'seller_reviews' tx.listing.seller.username %}">{{ tx.listing.seller.username }}</a></td>
-                            <td class="muted">{{ tx.completed_at|date:"d.m.Y H:i" }}</td>
-                            <td class="right">
-                                {% if tx.listing_id in reviewed_ids %}
-                                    <span class="muted small">{% trans "Reviewed" %}</span>
-                                {% else %}
-                                    <a class="btn btn-sm btn-outline" href="{% url 'seller_reviews' tx.listing.seller.username %}?listing={{ tx.listing_id }}#review-form">{% trans "Leave a review" %}</a>
-                                {% endif %}
-                            </td>
-                        </tr>
-                    {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-            {% else %}
-                <p class="muted">{% trans "No purchases yet." %}</p>
-            {% endif %}
-        </div>
+        {% else %}
+            <p class="muted">{% trans "No purchases yet." %} <a href="{% url 'item_list' %}">{% trans "Go to catalog" %}</a></p>
+        {% endif %}
     </div>
 </section>
 {% endblock %}

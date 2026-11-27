@@ -196,7 +196,11 @@ STORAGES = {
 
 # Куда отправлять неавторизованных пользователей (@login_required).
 LOGIN_URL = 'login'
-LOGIN_REDIRECT_URL = 'home'
+LOGIN_REDIRECT_URL = 'item_list'
+
+# Вход по номеру телефона. SMS в прототипе не отправляются:
+# при PHONE_AUTH_DEMO=True код показывается на странице ввода кода.
+PHONE_AUTH_DEMO = os.getenv('PHONE_AUTH_DEMO', 'True') == 'True'
 
 
 # Email

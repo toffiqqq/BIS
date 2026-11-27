@@ -11,44 +11,41 @@ msgstr ""
 msgid "Your listing"
 msgstr "Сіздің хабарландыруыңыз"
 
-msgid "Not enough money"
-msgstr "Қаражат жеткіліксіз"
-
-msgid "Buy this item?"
-msgstr "Бұл тауарды сатып аласыз ба?"
-
-msgid "Buy Now"
-msgstr "Сатып алу"
+msgid "Seller"
+msgstr "Сатушы"
 
 msgid "Log in to buy"
 msgstr "Сатып алу үшін кіріңіз"
 
-msgid "New listing"
+msgid "Post a New Item"
 msgstr "Жаңа хабарландыру"
 
-msgid "Publish"
+msgid "Description and specifications"
+msgstr "Сипаттама және сипаттамалар"
+
+msgid "Submit Listing"
 msgstr "Жариялау"
 
-msgid "Menu"
+msgid "Cancel"
+msgstr "Болдырмау"
+
+msgid "Toggle navigation"
 msgstr "Мәзір"
 
 msgid "Home"
 msgstr "Басты бет"
 
-msgid "Catalog"
-msgstr "Каталог"
-
 msgid "Profile"
 msgstr "Профиль"
 
-msgid "Sell an item"
-msgstr "Зат сату"
-
-msgid "Balance"
-msgstr "Баланс"
+msgid "Add Item"
+msgstr "Тауар қосу"
 
 msgid "Language"
 msgstr "Тіл"
+
+msgid "Balance"
+msgstr "Баланс"
 
 msgid "Logout"
 msgstr "Шығу"
@@ -62,42 +59,115 @@ msgstr "Тіркелу"
 msgid "Close"
 msgstr "Жабу"
 
-msgid "Buy and sell within the university"
-msgstr "Университет ішінде сатып алыңыз және сатыңыз"
+msgid "Sold"
+msgstr "Сатылды"
 
-msgid "Search listings"
-msgstr "Хабарландырулардан іздеу"
+msgid "This item has already been sold."
+msgstr "Бұл тауар сатылып қойған."
 
-msgid "Search"
-msgstr "Іздеу"
+msgid ""
+"This is your listing. When you sell it in person, mark it as sold in your "
+"profile."
+msgstr ""
+"Бұл сіздің хабарландыруыңыз. Кездесуде сатсаңыз, профильде белгілеңіз."
 
-msgid "New listings"
-msgstr "Жаңа хабарландырулар"
+msgid "Go to profile"
+msgstr "Профильге өту"
 
-msgid "All"
-msgstr "Барлығы"
+msgid "Not enough money"
+msgstr "Қаражат жеткіліксіз"
 
-msgid "No listings yet."
-msgstr "Әзірге хабарландыру жоқ."
+msgid "Top up"
+msgstr "Толтыру"
 
-#, python-format
-msgid "Under %(limit)s ₸"
-msgstr "%(limit)s ₸-ге дейін"
+msgid "Buy this item?"
+msgstr "Бұл тауарды сатып аласыз ба?"
 
-msgid "Title, seller or category"
-msgstr "Атауы, сатушы немесе санат"
+msgid "Buy Now"
+msgstr "Сатып алу"
+
+msgid "No reviews yet."
+msgstr "Әзірге пікір жоқ."
+
+msgid "Description"
+msgstr "Сипаттама"
+
+msgid "The seller has not added a description."
+msgstr "Сатушы сипаттама қоспаған."
+
+msgid "Specifications"
+msgstr "Сипаттамалар"
 
 msgid "Category"
 msgstr "Санат"
 
-msgid "Price from"
-msgstr "Баға, бастап"
+msgid "Condition"
+msgstr "Күйі"
 
-msgid "to"
-msgstr "дейін"
+msgid "Weight"
+msgstr "Салмағы"
 
-msgid "Sort"
-msgstr "Сұрыптау"
+msgid "kg"
+msgstr "кг"
+
+msgid "Size (L × W × H)"
+msgstr "Өлшемі (Ұ × Е × Б)"
+
+msgid "cm"
+msgstr "см"
+
+msgid "Published"
+msgstr "Жарияланды"
+
+msgid "More from this seller"
+msgstr "Сатушының басқа тауарлары"
+
+#, python-format
+msgid "Your balance: %(balance)s ₸."
+msgstr "Сіздің балансыңыз: %(balance)s ₸."
+
+msgid "Catalog"
+msgstr "Каталог"
+
+msgid "For KBTU students"
+msgstr "ҚБТУ студенттеріне"
+
+msgid "Textbooks, electronics and things for the dorm from other students."
+msgstr ""
+"Басқа студенттерден оқулықтар, техника және жатақханаға арналған заттар."
+
+msgid "Search"
+msgstr "Іздеу"
+
+msgid "What are you looking for?"
+msgstr "Не іздеп жүрсіз?"
+
+msgid "Popular categories"
+msgstr "Танымал санаттар"
+
+msgid "listings"
+msgstr "хабарл."
+
+msgid "Active Listings"
+msgstr "Белсенді хабарландырулар"
+
+msgid "found"
+msgstr "табылды"
+
+msgid "Search query"
+msgstr "Іздеу"
+
+msgid "Search by title, seller, or category..."
+msgstr "Атауы, сатушы немесе санат"
+
+msgid "All categories"
+msgstr "Барлық санаттар"
+
+msgid "Min price, KZT"
+msgstr "Баға, бастап, ₸"
+
+msgid "Max price, KZT"
+msgstr "Баға, дейін, ₸"
 
 msgid "Apply"
 msgstr "Қолдану"
@@ -105,32 +175,63 @@ msgstr "Қолдану"
 msgid "Reset"
 msgstr "Тазалау"
 
-msgid "Nothing found."
+msgid "No items found."
 msgstr "Ештеңе табылмады."
 
-msgid "Pages"
-msgstr "Беттер"
+msgid "Try changing your search keywords or reset the filter."
+msgstr "Сұранысты өзгертіңіз немесе сүзгіні тазалаңыз."
 
-msgid "Log in"
+msgid "No listings yet."
+msgstr "Әзірге хабарландыру жоқ."
+
+msgid "Buy and sell <span>on campus</span> in a few clicks"
+msgstr "<span>Кампуста</span> сатып алыңыз және сатыңыз"
+
+msgid "Sign In"
 msgstr "Кіру"
 
-msgid "No account?"
-msgstr "Аккаунт жоқ па?"
+msgid "Enter your phone number and we will send you a code."
+msgstr "Телефон нөміріңізді енгізіңіз, біз код жібереміз."
+
+msgid "Get code"
+msgstr "Кодты алу"
+
+msgid "Don't have an account?"
+msgstr "Аккаунтыңыз жоқ па?"
 
 msgid "Student ID"
-msgstr "Студенттік ID"
+msgstr "Студенттік билет нөмірі"
+
+msgid "On the site since"
+msgstr "Сайтта"
 
 msgid "Reviews"
 msgstr "Пікірлер"
 
-msgid "Active listings"
-msgstr "Белсенді хабарландырулар"
+msgid "Selling now"
+msgstr "Сатылымда"
 
-msgid "Sold"
-msgstr "Сатылғандар"
+msgid "Bought"
+msgstr "Сатып алынды"
 
-msgid "Purchases"
-msgstr "Сатып алулар"
+msgid "Top-up amount, KZT"
+msgstr "Толтыру сомасы, ₸"
+
+msgid "Withdrawal amount, KZT"
+msgstr "Шығару сомасы, ₸"
+
+msgid "Withdraw"
+msgstr "Шығару"
+
+msgid ""
+"This is a study prototype, so no real money moves. One operation: from 100 "
+"to 500,000 ₸."
+msgstr ""
+"Бұл оқу прототипі, нақты ақша есептен шығарылмайды. Бір операцияда 100-ден "
+"500 000 ₸-ге дейін."
+
+msgid "Balance history"
+msgstr "Баланс тарихы"
 
 msgid "Item"
 msgstr "Тауар"
@@ -138,11 +239,11 @@ msgstr "Тауар"
 msgid "Price"
 msgstr "Бағасы"
 
-msgid "Sold in person?"
-msgstr "Кездесуде саттыңыз ба?"
+msgid "Sold in person"
+msgstr "Кездесуде сатылды"
 
-msgid "Buyer username"
-msgstr "Сатып алушының логині"
+msgid "Buyer phone"
+msgstr "Сатып алушының телефоны"
 
 msgid "Mark as sold"
 msgstr "Сатылды деп белгілеу"
@@ -159,9 +260,6 @@ msgstr "Күні"
 msgid "Nothing sold yet."
 msgstr "Әзірге ештеңе сатылмады."
 
-msgid "Seller"
-msgstr "Сатушы"
-
 msgid "Reviewed"
 msgstr "Пікір қалдырылды"
 
@@ -171,17 +269,20 @@ msgstr "Пікір қалдыру"
 msgid "No purchases yet."
 msgstr "Әзірге сатып алу жоқ."
 
-msgid "Create account"
-msgstr "Аккаунт құру"
+msgid "Go to catalog"
+msgstr "Каталогқа өту"
 
-msgid "Already registered?"
-msgstr "Тіркелгенсіз бе?"
+msgid "Create Student Account"
+msgstr "Студент ретінде тіркелу"
 
-msgid "On the site since"
-msgstr "Сайтта"
+msgid "No password needed: you log in with a code sent to your phone."
+msgstr "Құпиясөз қажет емес: телефонға келген кодпен кіресіз."
 
-msgid "No reviews yet."
-msgstr "Әзірге пікір жоқ."
+msgid "Already have an account?"
+msgstr "Аккаунтыңыз бар ма?"
+
+msgid "Seller rating"
+msgstr "Сатушы рейтингі"
 
 msgid "Your review"
 msgstr "Сіздің пікіріңіз"
@@ -192,8 +293,24 @@ msgstr "Жіберу"
 msgid "Listings"
 msgstr "Хабарландырулар"
 
-msgid "Some filter values were invalid and were ignored."
-msgstr "Сүзгінің кейбір мәндері қате, сондықтан ескерілмеді."
+msgid "Confirmation code"
+msgstr "Растау коды"
+
+msgid "Demo mode: SMS is not sent. Your code:"
+msgstr "Демо-режим, SMS жіберілмейді. Сіздің кодыңыз:"
+
+msgid "Create account"
+msgstr "Аккаунт құру"
+
+msgid "Send the code again"
+msgstr "Кодты қайта жіберу"
+
+msgid "Change phone number"
+msgstr "Нөмірді өзгерту"
+
+#, python-format
+msgid "Enter the code for <strong>%(phone)s</strong>."
+msgstr "<strong>%(phone)s</strong> нөміріне арналған кодты енгізіңіз."
 
 #, python-format
 msgid "Your listing \"%(title)s\" is now live."
@@ -214,12 +331,53 @@ msgstr "«%(name)s» пайдаланушысы табылмады."
 msgid "\"%(title)s\" is marked as sold to %(name)s."
 msgstr "«%(title)s» %(name)s пайдаланушысына сатылды деп белгіленді."
 
-msgid "Thank you! Your review has been published."
-msgstr "Рахмет! Пікіріңіз жарияланды."
+msgid "The amount must be between 100 and 500,000 KZT."
+msgstr "Сома 100-ден 500 000 ₸-ге дейін болуы керек."
 
 #, python-format
-msgid "Welcome to Student Marketplace, %(name)s!"
-msgstr "Student Marketplace-ке қош келдіңіз, %(name)s!"
+msgid "Balance topped up by %(amount)s ₸."
+msgstr "Баланс %(amount)s ₸-ге толтырылды."
+
+#, python-format
+msgid "%(amount)s ₸ withdrawn from your balance."
+msgstr "Баланстан %(amount)s ₸ шығарылды."
+
+msgid "Your review is published."
+msgstr "Пікір жарияланды."
+
+msgid "A new code has been sent."
+msgstr "Жаңа код жіберілді."
+
+msgid "Wait 30 seconds before requesting a new code."
+msgstr "Жаңа кодты сұрамас бұрын 30 секунд күтіңіз."
+
+msgid "This phone number is already registered."
+msgstr "Бұл нөмір тіркелген."
+
+#, python-format
+msgid "Welcome, %(name)s! You have 10,000 ₸ on your balance."
+msgstr "Қош келдіңіз, %(name)s! Балансыңызда 10 000 ₸."
+
+msgid "No account with this phone number. Register first."
+msgstr "Бұл нөмірмен аккаунт жоқ. Алдымен тіркеліңіз."
+
+msgid "Phone number"
+msgstr "Телефон нөмірі"
+
+msgid "Enter a phone number like +7 701 123 45 67."
+msgstr "Нөмірді +7 701 123 45 67 форматында енгізіңіз."
+
+msgid "Your name"
+msgstr "Атыңыз"
+
+msgid "User with this Student ID already exists."
+msgstr "Мұндай Student ID бар пайдаланушы бар."
+
+msgid "Code"
+msgstr "Код"
+
+msgid "Amount, KZT"
+msgstr "Сома, ₸"
 
 msgid "Title"
 msgstr "Атауы"
@@ -227,33 +385,43 @@ msgstr "Атауы"
 msgid "Price (KZT)"
 msgstr "Бағасы (₸)"
 
+msgid "Weight, kg"
+msgstr "Салмағы, кг"
+
+msgid "Length, cm"
+msgstr "Ұзындығы, см"
+
+msgid "Width, cm"
+msgstr "Ені, см"
+
+msgid "Height, cm"
+msgstr "Биіктігі, см"
+
 msgid "Image link (optional)"
 msgstr "Сурет сілтемесі (міндетті емес)"
+
+msgid "Condition, defects, what comes with it."
+msgstr "Күйі, ақаулары, жиынтықта не бар."
 
 msgid "Leave empty to use the category picture."
 msgstr "Бос қалдырсаңыз, санат суреті қойылады."
 
+msgid "Describe the item in more detail, at least 10 characters."
+msgstr "Тауарды толығырақ сипаттаңыз, кемінде 10 таңба."
+
+msgid "Must be greater than 0."
+msgstr "0-ден үлкен болуы керек."
+
 msgid "Item price must be greater than 0 KZT."
 msgstr "Баға 0 ₸-ден жоғары болуы керек."
 
-msgid "Item price exceeds the maximum limit (100,000 KZT)."
-msgstr "Баға ең жоғары шектен асады (100 000 ₸)."
+msgid "The price can't be higher than 100,000 KZT."
+msgstr "Баға 100 000 ₸-ден аспауы керек."
 
 msgid ""
-"Limit exceeded: a student cannot have more than 10 active listings at the "
-"same time."
+"You already have 10 active listings. Sell one before posting a new one."
 msgstr ""
-"Шектен асты: студентте бір уақытта 10-нан көп белсенді хабарландыру "
-"болмайды."
-
-msgid "Newest first"
-msgstr "Алдымен жаңалары"
-
-msgid "Price: low to high"
-msgstr "Алдымен арзандары"
-
-msgid "Price: high to low"
-msgstr "Алдымен қымбаттары"
+"Сізде 10 белсенді хабарландыру бар. Жаңасын қосу үшін біреуін сатыңыз."
 
 msgid "Purchase"
 msgstr "Сатып алу"
@@ -267,9 +435,6 @@ msgstr "Пікір мәтіні"
 msgid "You cannot buy your own listing."
 msgstr "Өз тауарыңызды сатып ала алмайсыз."
 
-msgid "This item has already been sold."
-msgstr "Бұл тауар сатылып қойған."
-
 msgid "This item is not available for purchase."
 msgstr "Бұл тауарды сатып алу мүмкін емес."
 
@@ -280,13 +445,43 @@ msgid "You cannot review yourself."
 msgstr "Өзіңізге пікір қалдыра алмайсыз."
 
 msgid ""
-"You can only review a seller after buying from them, once per purchase."
+"You can review a seller only after buying from them, once per purchase."
 msgstr ""
-"Пікірді сатушыдан сатып алғаннан кейін ғана қалдыруға болады — бір сатып "
-"алуға бір рет."
+"Пікірді сатушыдан сатып алғаннан кейін ғана, әр сатып алуға бір рет "
+"қалдыруға болады."
 
 msgid "You have already reviewed this purchase."
 msgstr "Сіз бұл сатып алуға пікір қалдырып қойғансыз."
+
+msgid "New"
+msgstr "Жаңа"
+
+msgid "Like new"
+msgstr "Жаңадай"
+
+msgid "Good"
+msgstr "Жақсы"
+
+msgid "Fair"
+msgstr "Орташа"
+
+msgid "Top-up"
+msgstr "Толтыру"
+
+msgid "Withdrawal"
+msgstr "Шығару"
+
+msgid "Sale"
+msgstr "Сату"
+
+msgid "Request a new code."
+msgstr "Жаңа код сұраңыз."
+
+msgid "The code has expired. Request a new one."
+msgstr "Кодтың мерзімі өтті. Жаңасын сұраңыз."
+
+msgid "Wrong code."
+msgstr "Код қате."
 
 msgid "English"
 msgstr "Ағылшын"

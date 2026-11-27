@@ -1,22 +1,22 @@
+import secrets
+
 from django.contrib import messages
 from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.forms import AuthenticationForm
-from django.core.paginator import Paginator
 from django.db.models import Avg, Count, Q
 from django.shortcuts import get_object_or_404, redirect, render
+from django.urls import reverse
 from django.utils.http import url_has_allowed_host_and_scheme
 from django.utils.translation import gettext as _
 from django.views.decorators.http import require_POST
 
-from .forms import CatalogFilterForm, ItemListingForm, ReviewForm, StudentRegisterForm
-from .models import Category, ItemListing, Review, Transaction, User
-from .services import (PurchaseError, ReviewError, leave_review, purchase_listing,
-                       reviewable_purchases)
-
-# Категории, которые показываются плитками на главной странице.
-HOME_CATEGORIES = ['Textbooks', 'Electronics', 'Stationery', 'Household']
-BUDGET_LIMIT = 5000  # «бюджетные» предложения — до 5 000 ₸
+from . import phone_auth
+from .filters import ItemFilterForm
+from .forms import (CodeForm, ItemListingForm, PhoneLoginForm, PhoneRegisterForm, ReviewForm,
+                    WalletForm)
+from .models import Category, ItemListing, Review, User
+from .services import (PurchaseError, ReviewError, WalletError, deposit, leave_review,
+                       purchase_listing, reviewable_purchases, withdraw)
 
 
 def _safe_next(request, default='item_list'):
@@ -25,7 +25,7 @@ def _safe_next(request, default='item_list'):
     if nxt and url_has_allowed_host_and_scheme(nxt, allowed_hosts={request.get_host()},
                                                require_https=request.is_secure()):
         return nxt
-    return default
+    return reverse(default) if not default.startswith('/') else default
 
 
 def _active_items():
@@ -34,75 +34,8 @@ def _active_items():
 
 
 # ---------------------------------------------------------------------------
-# Главная-витрина и каталог
+# Каталог (главная) и страница товара
 # ---------------------------------------------------------------------------
-
-def home(request):
-    categories = {c.name: c for c in Category.objects.filter(name__in=HOME_CATEGORIES)
-                  .annotate(active_count=Count('items', filter=Q(items__status='Active')))}
-    tiles = [categories[name] for name in HOME_CATEGORIES if name in categories]
-
-    active = _active_items()
-    context = {
-        'tiles': tiles,
-        'fresh_items': active.order_by('-created_at')[:4],
-        'budget_items': active.filter(price__lte=BUDGET_LIMIT).order_by('price', '-created_at')[:4],
-        'budget_limit': BUDGET_LIMIT,
-    }
-    return render(request, 'marketplace/home.html', context)
-
-
-def item_list(request):
-    """Каталог: поиск + фильтр по категории и цене + сортировка + страницы."""
-    form = CatalogFilterForm(request.GET or None)
-    items = _active_items()
-    query = ''
-    order = '-created_at'
-
-    if form.is_valid():
-        data = form.cleaned_data
-        query = (data.get('q') or '').strip()
-        if query:
-            items = items.filter(
-                Q(title__icontains=query) |
-                Q(seller__username__icontains=query) |
-                Q(category__name__icontains=query)
-            )
-        if data.get('category'):
-            items = items.filter(category=data['category'])
-        if data.get('min_price') is not None:
-            items = items.filter(price__gte=data['min_price'])
-        if data.get('max_price') is not None:
-            items = items.filter(price__lte=data['max_price'])
-        order = {'cheap': 'price', 'expensive': '-price'}.get(data.get('sort'), '-created_at')
-    elif request.GET:
-        messages.warning(request, _('Some filter values were invalid and were ignored.'))
-
-    items = items.order_by(order, '-id')
-    page = Paginator(items, 12).get_page(request.GET.get('page'))
-
-    params = request.GET.copy()
-    params.pop('page', None)
-    has_filters = any(v for k, v in request.GET.items() if k not in ('page', 'sort'))
-
-    return render(request, 'marketplace/item_list.html', {
-        'items': page.object_list,
-        'page_obj': page,
-        'query': query,
-        'filter_form': form if form.is_bound else CatalogFilterForm(),
-        'categories': Category.objects.order_by('name'),
-        'querystring': params.urlencode(),
-        'has_filters': has_filters,
-        'total': page.paginator.count,
-    })
-
-from django.db.models import Count, Q
-from django.views.decorators.http import require_POST
-
-from .models import User, ItemListing, Category, Transaction, Review
-from .forms import StudentRegisterForm, ItemListingForm
-from .filters import ItemFilterForm
-from .services import PurchaseError, purchase_listing
 
 def item_list(request):
     filters = ItemFilterForm(request.GET).cleaned_or_empty()
@@ -111,16 +44,13 @@ def item_list(request):
     min_price = filters['min_price']
     max_price = filters['max_price']
 
-    items = (
-        ItemListing.objects.filter(status='Active')
-        .select_related('category', 'seller')
-        .order_by('-created_at')
-    )
+    items = _active_items().order_by('-created_at')
 
     if query:
         items = items.filter(
             Q(title__icontains=query) |
             Q(seller__username__icontains=query) |
+            Q(seller__first_name__icontains=query) |
             Q(category__name__icontains=query)
         )
     if category:
@@ -148,6 +78,20 @@ def item_list(request):
     }
     return render(request, 'marketplace/item_list.html', context)
 
+
+def item_detail(request, item_id):
+    """Страница товара: описание, характеристики, продавец и кнопка покупки."""
+    item = get_object_or_404(ItemListing.objects.select_related('seller', 'category'), id=item_id)
+    seller_rating = item.seller.reviews_received.aggregate(avg=Avg('rating'), n=Count('id'))
+    more_items = (_active_items().filter(seller=item.seller).exclude(id=item.id)
+                  .order_by('-created_at')[:3])
+    return render(request, 'marketplace/item_detail.html', {
+        'item': item,
+        'seller_rating': seller_rating,
+        'more_items': more_items,
+    })
+
+
 @login_required
 def add_item(request):
     if request.method == 'POST':
@@ -158,7 +102,7 @@ def add_item(request):
             item.seller = request.user
             item.save()
             messages.success(request, _('Your listing "%(title)s" is now live.') % {'title': item.title})
-            return redirect('item_list')
+            return redirect('item_detail', item_id=item.id)
     else:
         form = ItemListingForm()
     return render(request, 'marketplace/add_item.html', {'form': form})
@@ -182,25 +126,35 @@ def buy_item(request, item_id):
     return redirect(_safe_next(request))
 
 
+def _find_buyer(value):
+    """Покупатель по номеру телефона (основной способ) или по логину."""
+    value = (value or '').strip()
+    phone = phone_auth.normalize_phone(value)
+    users = User.objects.filter(is_active=True)
+    if phone:
+        return users.filter(phone=phone).first()
+    return users.filter(username=value).first()
+
+
 @login_required
 def mark_as_sold(request, item_id):
-    """Продавец отмечает товар проданным конкретному покупателю.
+    """Продавец отмечает товар проданным конкретному покупателю (сделка при встрече).
 
-    Покупатель передаётся только POST-параметром `buyer` (username):
+    Покупатель передаётся только POST-параметром `buyer` (номер телефона или логин):
     обычный переход по ссылке (GET) ничего не меняет в базе.
     """
     item = get_object_or_404(ItemListing, id=item_id, seller=request.user)
     if request.method != 'POST':
         return redirect('item_list')
 
-    buyer_username = (request.POST.get('buyer') or '').strip()
-    if not buyer_username:
+    buyer_value = (request.POST.get('buyer') or '').strip()
+    if not buyer_value:
         messages.error(request, _('Specify the buyer to mark this item as sold.'))
         return redirect(_safe_next(request))
 
-    buyer = User.objects.filter(username=buyer_username, is_active=True).first()
+    buyer = _find_buyer(buyer_value)
     if buyer is None:
-        messages.error(request, _('User "%(name)s" was not found.') % {'name': buyer_username})
+        messages.error(request, _('User "%(name)s" was not found.') % {'name': buyer_value})
         return redirect(_safe_next(request))
 
     try:
@@ -210,12 +164,12 @@ def mark_as_sold(request, item_id):
         messages.error(request, _(str(exc)))
     else:
         messages.success(request, _('"%(title)s" is marked as sold to %(name)s.')
-                         % {'title': item.title, 'name': buyer.username})
+                         % {'title': item.title, 'name': buyer.display_name})
     return redirect(_safe_next(request))
 
 
 # ---------------------------------------------------------------------------
-# Профиль и отзывы
+# Профиль, баланс и отзывы
 # ---------------------------------------------------------------------------
 
 @login_required
@@ -230,14 +184,40 @@ def profile(request):
 
     return render(request, 'marketplace/profile.html', {
         'profile_user': user,
+        'phone_display': phone_auth.format_phone(user.phone),
         'active_listings': [i for i in listings if i.status == 'Active'],
         'sold_listings': (listings.filter(status='Sold')
                           .select_related('transaction__buyer')),
         'purchases': purchases,
         'reviewed_ids': reviewed_ids,
         'rating': rating,
-        'total_spent': sum(tx.listing.price for tx in purchases),
+        'operations': user.wallet_operations.select_related('listing')[:20],
+        'deposit_form': WalletForm(prefix='deposit'),
+        'withdraw_form': WalletForm(prefix='withdraw'),
     })
+
+
+@login_required
+@require_POST
+def wallet_operation(request, kind):
+    """Пополнение (kind='deposit') или вывод (kind='withdraw') баланса."""
+    if kind not in ('deposit', 'withdraw'):
+        return redirect('profile')
+    form = WalletForm(request.POST, prefix=kind)
+    if not form.is_valid():
+        messages.error(request, _('The amount must be between 100 and 500,000 KZT.'))
+        return redirect(reverse('profile') + '#wallet')
+    amount = form.cleaned_data['amount']
+    try:
+        if kind == 'deposit':
+            deposit(request.user, amount)
+            messages.success(request, _('Balance topped up by %(amount)s ₸.') % {'amount': f'{amount:,.0f}'})
+        else:
+            withdraw(request.user, amount)
+            messages.success(request, _('%(amount)s ₸ withdrawn from your balance.') % {'amount': f'{amount:,.0f}'})
+    except WalletError as exc:
+        messages.error(request, _(str(exc)))
+    return redirect(reverse('profile') + '#wallet')
 
 
 def seller_reviews(request, username):
@@ -247,7 +227,7 @@ def seller_reviews(request, username):
 
     if request.method == 'POST':
         if not request.user.is_authenticated:
-            return redirect(f"{_login_url()}?next={request.path}")
+            return redirect(f"{reverse('login')}?next={request.path}")
         form = ReviewForm(request.POST, purchases=purchases)
         if form.is_valid():
             try:
@@ -256,7 +236,7 @@ def seller_reviews(request, username):
             except ReviewError as exc:
                 messages.error(request, _(str(exc)))
             else:
-                messages.success(request, _('Thank you! Your review has been published.'))
+                messages.success(request, _('Your review is published.'))
             return redirect('seller_reviews', username=seller.username)
     else:
         initial = {}
@@ -279,44 +259,104 @@ def seller_reviews(request, username):
         'distribution': distribution,
         'form': form,
         'can_review': bool(purchases),
-        'active_items': _active_items().filter(seller=seller).order_by('-created_at')[:4],
+        'active_items': _active_items().filter(seller=seller).order_by('-created_at')[:3],
     })
 
 
-def _login_url():
-    from django.urls import reverse
-    return reverse('login')
-
-
 # ---------------------------------------------------------------------------
-# Аккаунт
+# Аккаунт: регистрация и вход по номеру телефона
 # ---------------------------------------------------------------------------
+
+def _new_username():
+    """Внутренний логин (в URL отзывов). Номер телефона в адресах не показываем."""
+    while True:
+        username = 'u' + secrets.token_hex(4)
+        if not User.objects.filter(username=username).exists():
+            return username
+
 
 def register_view(request):
+    if request.user.is_authenticated:
+        return redirect('item_list')
     if request.method == 'POST':
-        form = StudentRegisterForm(request.POST)
+        form = PhoneRegisterForm(request.POST)
         if form.is_valid():
-            user = form.save()
-            login(request, user)
-            messages.success(request, _('Welcome to Student Marketplace, %(name)s!') % {'name': user.username})
-            return redirect('home')
+            data = form.cleaned_data
+            phone_auth.start_verification(request, data['phone'], 'register', {
+                'first_name': data['first_name'], 'student_id': data['student_id'],
+            })
+            return redirect('verify_phone')
     else:
-        form = StudentRegisterForm()
+        form = PhoneRegisterForm()
     return render(request, 'marketplace/register.html', {'form': form})
 
 
 def login_view(request):
+    if request.user.is_authenticated:
+        return redirect('item_list')
     if request.method == 'POST':
-        form = AuthenticationForm(request, data=request.POST)
+        form = PhoneLoginForm(request.POST)
         if form.is_valid():
-            user = form.get_user()
-            login(request, user)
-            return redirect(_safe_next(request, default='home'))
+            phone_auth.start_verification(request, form.cleaned_data['phone'], 'login',
+                                          {'next': _safe_next(request)})
+            return redirect('verify_phone')
     else:
-        form = AuthenticationForm()
+        form = PhoneLoginForm()
     return render(request, 'marketplace/login.html', {'form': form, 'next': request.GET.get('next', '')})
+
+
+def verify_phone(request):
+    """Второй шаг входа и регистрации: ввод кода из SMS."""
+    pending = phone_auth.pending(request)
+    if not pending:
+        return redirect('login')
+
+    if request.method == 'POST' and 'resend' in request.POST:
+        if phone_auth.can_resend(request):
+            phone_auth.resend(request)
+            messages.info(request, _('A new code has been sent.'))
+        else:
+            messages.warning(request, _('Wait 30 seconds before requesting a new code.'))
+        return redirect('verify_phone')
+
+    form = CodeForm(request.POST or None)
+    if request.method == 'POST' and form.is_valid():
+        try:
+            data = phone_auth.check_code(request, form.cleaned_data['code'])
+        except phone_auth.VerificationError as exc:
+            form.add_error('code', _(str(exc)))
+            if not phone_auth.pending(request):
+                messages.error(request, _(str(exc)))
+                return redirect('register' if pending['purpose'] == 'register' else 'login')
+        else:
+            if data['purpose'] == 'register':
+                payload = data['payload']
+                if User.objects.filter(phone=data['phone']).exists():
+                    messages.error(request, _('This phone number is already registered.'))
+                    return redirect('login')
+                user = User(username=_new_username(), phone=data['phone'],
+                            first_name=payload['first_name'], student_id=payload['student_id'])
+                user.set_unusable_password()
+                user.save()
+                login(request, user, backend='django.contrib.auth.backends.ModelBackend')
+                messages.success(request, _('Welcome, %(name)s! You have 10,000 ₸ on your balance.')
+                                 % {'name': user.display_name})
+                return redirect('item_list')
+            user = User.objects.filter(phone=data['phone'], is_active=True).first()
+            if user is None:
+                messages.error(request, _('No account with this phone number. Register first.'))
+                return redirect('register')
+            login(request, user, backend='django.contrib.auth.backends.ModelBackend')
+            return redirect(data['payload'].get('next') or reverse('item_list'))
+
+    return render(request, 'marketplace/verify_phone.html', {
+        'form': form,
+        'phone_display': phone_auth.format_phone(pending['phone']),
+        'purpose': pending['purpose'],
+        'demo_code': pending.get('demo_code'),
+    })
 
 
 def logout_view(request):
     logout(request)
-    return redirect('home')
+    return redirect('item_list')
